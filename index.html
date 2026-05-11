@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rentabilité Immobilière</title>
+<style>
+:root {
+  --bg:#0f1117; --bg2:#1a1d2e; --bg3:#252840; --bg4:#2e3158;
+  --accent:#6c63ff; --accent2:#ff6584; --green:#00d4aa;
+  --yellow:#ffd166; --red:#ef476f; --text:#e8eaf6; --text2:#9b9ec4;
+  --border:#2e3158; --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+header{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--border);padding:18px 28px;display:flex;align-items:center;gap:14px}
+header h1{font-size:20px;font-weight:700}
+header p{font-size:12px;color:var(--text2);margin-top:2px}
+nav{display:flex;gap:4px;padding:12px 28px;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:wrap}
+nav button{padding:7px 15px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:13px;cursor:pointer;white-space:nowrap;transition:all .2s}
+nav button.active,nav button:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.wrap{max-width:1140px;margin:0 auto;padding:24px 20px}
+.sec{display:none}.sec.active{display:block}
+h2{font-size:17px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.card h3{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--text2);margin-bottom:4px;margin-top:10px}
+label:first-child{margin-top:0}
+input,select{width:100%;padding:8px 11px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:14px;outline:none;transition:border .2s}
+input:focus,select:focus{border-color:var(--accent)}
+input[type=range]{padding:0;height:6px;cursor:pointer;accent-color:var(--accent);background:var(--bg3);border:none}
+.rv{font-size:12px;color:var(--accent);font-weight:600;text-align:right;margin-top:3px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}
+.kpi .kl{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.kpi .kv{font-size:24px;font-weight:800;margin:5px 0 2px}
+.kpi .ks{font-size:11px;color:var(--text2)}
+.kpi.g .kv{color:var(--green)}.kpi.y .kv{color:var(--yellow)}.kpi.r .kv{color:var(--red)}.kpi.p .kv{color:var(--accent)}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{background:var(--bg3);padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:1px solid var(--border)}
+table.t td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.t tr:last-child td{border-bottom:none}
+table.t tr:hover td{background:var(--bg3)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+.btn-a{background:var(--accent);color:#fff}.btn-a:hover{opacity:.85}
+.btn-g{background:var(--green);color:#000}.btn-g:hover{opacity:.85}
+.btn-ghost{background:var(--bg3);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-d{background:var(--red);color:#fff}.btn-d:hover{opacity:.85}
+.btn-sm{padding:5px 9px;font-size:12px}
+.good{color:var(--green)}.warn{color:var(--yellow)}.bad{color:var(--red)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bn{background:rgba(108,99,255,.2);color:var(--accent)}.bm{background:rgba(0,212,170,.2);color:var(--green)}
+.info{background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--text2);margin-top:10px}
+.info strong{color:var(--accent)}
+.sep{border:none;border-top:1px solid var(--border);margin:16px 0}
+.addr-bar{display:flex;gap:10px;align-items:flex-end;margin-bottom:18px}
+.addr-bar input{flex:1}
+.addr-status{font-size:12px;margin-top:4px}
+/* Étude marché */
+.dvf-card{background:var(--bg3);border-radius:10px;padding:14px;margin-top:12px}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center}
+.stat .sv{font-size:20px;font-weight:800;color:var(--yellow)}
+.stat .sl{font-size:11px;color:var(--text2);margin-top:3px}
+.link-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.site-link{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);text-decoration:none;font-size:13px;transition:all .2s}
+.site-link:hover{border-color:var(--accent);color:var(--accent)}
+.site-link .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+/* Travaux */
+table.t input{padding:5px 8px;font-size:13px}
+table.t input[type=number]{width:90px}
+.ttbar{display:flex;gap:12px;flex-wrap:wrap;background:var(--bg3);border-radius:var(--r);padding:12px 16px;margin-top:12px;border:1px solid var(--border)}
+.ttbar .tb .tl{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.ttbar .tb .tv{font-size:18px;font-weight:800;color:var(--yellow)}
+/* Lots */
+.lot-row{display:grid;grid-template-columns:auto 1fr 80px 120px 90px 120px 80px 36px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.lot-row:last-child{border-bottom:none}
+.lot-num{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+/* Loading */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+/* Revente timeline */
+.tl{display:flex;align-items:center;gap:0;background:var(--bg3);border-radius:var(--r);padding:16px 18px;overflow-x:auto;margin:14px 0}
+.tl-s{flex:1;min-width:100px;text-align:center}
+.tl-s .ti{font-size:20px}
+.tl-s .tl2{font-size:11px;color:var(--text2);margin-top:3px}
+.tl-s .tv{font-size:13px;font-weight:700;color:var(--yellow)}
+.tl-a{font-size:18px;color:var(--border);padding:0 2px}
+/* Facteurs économiques */
+.facteur-card{background:var(--bg3);border-radius:10px;padding:13px 16px;border-left:3px solid var(--accent);margin-bottom:8px;display:flex;align-items:flex-start;gap:12px}
+.facteur-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.facteur-title{font-size:14px;font-weight:700;margin-bottom:3px}
+.facteur-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.score-dots{display:flex;gap:3px;margin-top:5px}
+.dot-s{width:9px;height:9px;border-radius:50%;background:var(--border)}
+.dot-s.on{background:var(--yellow)}
+/* Estimation statique */
+.est-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.est-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center}
+.est-val{font-size:19px;font-weight:800;color:var(--yellow)}
+.est-rng{font-size:11px;color:var(--green);margin:2px 0}
+.est-lbl{font-size:11px;color:var(--text2)}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:26px">🏠</div>
+  <div>
+    <h1>Rentabilité Immobilière</h1>
+    <p>Analyse complète · Location nue &amp; meublée · Travaux · Revente · Étude de marché</p>
+  </div>
+</header>
+<nav id="nav">
+  <button class="active" onclick="show('rent',this)">📊 Rentabilité</button>
+  <button onclick="show('marche',this)">🔍 Étude de marché</button>
+  <button onclick="show('financement',this)">🏗️ Financement</button>
+  <button onclick="show('charges',this)">💶 Charges &amp; Fiscal</button>
+  <button onclick="show('travaux',this)">🔨 Travaux</button>
+  <button onclick="show('revente',this)">💰 Revente</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ══════════ 1. RENTABILITÉ ══════════ -->
+<div class="sec active" id="sec-rent">
+  <h2>📊 Rentabilité du bien</h2>
+
+  <!-- Adresse -->
+  <div class="card" style="margin-bottom:16px">
+    <h3>📍 Adresse du bien</h3>
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+      <div style="flex:3;min-width:220px">
+        <label>Adresse complète</label>
+        <input type="text" id="adresse" placeholder="Ex : 12 rue de la Paix, 75001 Paris" oninput="onAdresseInput()">
+        <div id="addr_suggestions" style="position:relative"></div>
+      </div>
+      <div style="flex:1;min-width:120px">
+        <label>Type de bien</label>
+        <select id="type_bien" onchange="calc()">
+          <option value="appartement">Appartement</option>
+          <option value="maison">Maison</option>
+          <option value="immeuble">Immeuble</option>
+          <option value="local">Local commercial</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:100px">
+        <label>Surface totale (m²)</label>
+        <input type="number" id="surface" value="50" oninput="calc()">
+      </div>
+    </div>
+    <div id="addr_status" class="addr-status" style="color:var(--text2)"></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:16px">
+    <!-- Coûts -->
+    <div class="card">
+      <h3>💸 Coût d'acquisition</h3>
+      <label>Prix d'achat FAI (€)</label>
+      <input type="number" id="prix_achat" value="180000" oninput="calc()">
+      <label>Frais de notaire (%)</label>
+      <input type="number" id="pct_notaire" value="7.5" step="0.1" oninput="calc()">
+      <label>Frais de dossier bancaire (€)</label>
+      <input type="number" id="frais_dossier" value="1000" oninput="calc()">
+      <label>Travaux (€) <small style="color:var(--text2)">— auto depuis onglet Travaux</small></label>
+      <input type="number" id="r_travaux" value="0" oninput="calc()">
+      <label>Ameublement (€)</label>
+      <input type="number" id="ameublement" value="0" oninput="calc()">
+      <label>Autres frais (courtier, garantie…) (€)</label>
+      <input type="number" id="autres_frais" value="500" oninput="calc()">
+    </div>
+
+    <!-- Résumé coûts -->
+    <div class="card" style="display:flex;flex-direction:column;gap:10px">
+      <h3>📋 Récapitulatif</h3>
+      <div id="recap_couts" style="font-size:13px"></div>
+      <hr class="sep" style="margin:4px 0">
+      <div class="kpi-grid" style="margin:0">
+        <div class="kpi p"><div class="kl">Coût total</div><div class="kv" id="k_cout_total">—</div><div class="ks">investissement global</div></div>
+        <div class="kpi y"><div class="kl">Prix revient/m²</div><div class="kv" id="k_pm2">—</div><div class="ks">coût / surface</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lots / appartements -->
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0">🏘️ Lots à louer</h3>
+      <button class="btn btn-a btn-sm" onclick="addLot()">+ Ajouter un lot</button>
+    </div>
+    <div style="overflow-x:auto">
+      <div style="display:grid;grid-template-columns:auto 1fr 80px 120px 90px 120px 80px 36px;gap:8px;padding:0 0 6px;min-width:700px">
+        <div></div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Description</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Surface</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Type location</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Loyer/mois</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Charges rép.</div>
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase">Vacance %</div>
+        <div></div>
+      </div>
+      <div id="lots_container" style="min-width:700px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--text2)">
+        <span id="lots_count">0</span> lot(s) · Loyer total : <strong id="loyer_total_disp" style="color:var(--green)">—</strong>/mois
+      </div>
+    </div>
+  </div>
+
+  <!-- Résultats rentabilité -->
+  <div class="kpi-grid">
+    <div class="kpi g"><div class="kl">Loyer annuel brut</div><div class="kv" id="k_loyer_an">—</div><div class="ks" id="k_loyer_an_s">—</div></div>
+    <div class="kpi g"><div class="kl">Rendement brut</div><div class="kv" id="k_rend_brut">—</div><div class="ks">loyers / coût total</div></div>
+    <div class="kpi y"><div class="kl">Rendement brut prix achat</div><div class="kv" id="k_rend_brut2">—</div><div class="ks">loyers / prix achat seul</div></div>
+    <div class="kpi p"><div class="kl">Loyer/m² mensuel</div><div class="kv" id="k_loyer_m2">—</div><div class="ks">toutes surfaces</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>📊 Règle des 10% / 7% / 5%</h3>
+      <div id="regle_bloc" style="font-size:13px;line-height:2"></div>
+    </div>
+    <div class="card">
+      <h3>💡 Estimation charges &amp; net (rapide)</h3>
+      <div id="quick_net" style="font-size:13px;line-height:1.9"></div>
+      <div class="info" style="margin-top:8px;font-size:12px">Estimation rapide. Utilisez l'onglet <strong>Charges &amp; Fiscal</strong> pour un calcul précis.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 2. ÉTUDE DE MARCHÉ ══════════ -->
+<div class="sec" id="sec-marche">
+  <h2>🔍 Étude de marché</h2>
+
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <label>Adresse / ville / code postal</label>
+        <input type="text" id="adresse_marche" placeholder="Ex : Barjols, 83670 ou depuis l'onglet Rentabilité" oninput="onMarcheAdresseInput(this.value)">
+      </div>
+      <button class="btn btn-g" onclick="lancerEtudeMarche()">📊 Analyser le marché</button>
+    </div>
+    <div id="marche_status" style="font-size:12px;color:var(--text2);margin-top:8px"></div>
+  </div>
+
+  <!-- Carte OpenStreetMap -->
+  <div id="map_marche_wrap" style="display:none;margin-bottom:16px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)">
+    <div id="map_marche" style="height:300px"></div>
+  </div>
+
+  <!-- Stats DVF -->
+  <div id="dvf_result" class="hidden">
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>🏢 Appartements — Prix au m²</h3>
+        <div class="stat-grid" id="stats_appart"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:6px" id="nb_appart"></div>
+      </div>
+      <div class="card">
+        <h3>🏡 Maisons — Prix au m²</h3>
+        <div class="stat-grid" id="stats_maison"></div>
+        <div style="font-size:12px;color:var(--text2);margin-top:6px" id="nb_maison"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>📋 Dernières transactions DVF (50 plus récentes)</h3>
+      <div style="overflow-x:auto;max-height:320px;overflow-y:auto">
+        <table class="t" id="dvf_table">
+          <thead><tr><th>Date</th><th>Type</th><th>Surface</th><th>Prix</th><th>Prix/m²</th><th>Adresse</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px">Source : <strong>Demandes de Valeurs Foncières</strong> — Données officielles Ministère des Finances (data.gouv.fr)</div>
+    </div>
+
+    <!-- Estimation loyer -->
+    <div class="card" style="margin-bottom:14px">
+      <h3>💶 Estimation loyers du marché (références)</h3>
+      <div id="loyer_ref" style="font-size:13px"></div>
+    </div>
+  </div>
+
+  <!-- Estimations statiques & facteurs économiques -->
+  <div id="marche_static" class="hidden">
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>🏢 Prix/m² estimé — Appartement</h3>
+        <div id="static_app_prix" class="est-grid2"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px">Médiane départementale — Notaires de France / INSEE 2024</div>
+      </div>
+      <div class="card">
+        <h3>🏡 Prix/m² estimé — Maison</h3>
+        <div id="static_mais_prix" class="est-grid2"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px">Médiane départementale — Notaires de France / INSEE 2024</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-bottom:14px">
+      <div class="card">
+        <h3>💶 Loyer au m²/mois — Appartement</h3>
+        <div id="static_app_loyer" class="est-grid2"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px">Source : Observatoire CLAMEUR / OLAP 2024</div>
+      </div>
+      <div class="card">
+        <h3>💶 Loyer au m²/mois — Maison</h3>
+        <div id="static_mais_loyer" class="est-grid2"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px">Source : Observatoire CLAMEUR / OLAP 2024</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <h3>🔎 Facteurs économiques &amp; attractivité</h3>
+      <div id="facteurs_eco" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- Liens externes -->
+  <div class="card">
+    <h3>🔗 Consulter les sites immobiliers</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:10px">Cliquez pour ouvrir le site avec la ville pré-remplie</p>
+    <div class="link-grid" id="site_links"></div>
+    <div class="info" style="margin-top:12px">
+      <strong>Conseil :</strong> Sur DVF officiel, filtrez par "Appartement" ou "Maison" et comparez avec les prix observés ci-dessus pour valider la cohérence de votre prix d'achat.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 3. FINANCEMENT ══════════ -->
+<div class="sec" id="sec-financement">
+  <h2>🏗️ Financement</h2>
+  <div class="g2">
+    <div class="card">
+      <h3>Prêt immobilier</h3>
+      <label>Type d'apport</label>
+      <select id="apport_type" onchange="updateApport()">
+        <option value="zero">Aucun apport (0 €)</option>
+        <option value="notaire">Frais de notaire seulement</option>
+        <option value="custom" selected>Montant personnalisé</option>
+      </select>
+      <div id="apport_custom_row">
+        <label>Apport personnalisé (€)</label>
+        <input type="number" id="apport" value="30000" oninput="calc()">
+      </div>
+      <div id="apport_info" style="margin-top:6px;padding:8px 12px;background:var(--bg3);border-radius:8px;font-size:13px;color:var(--text2)"></div>
+      <label>Durée du prêt (ans)</label>
+      <input type="range" id="duree_pret" min="5" max="30" value="20" oninput="calc();document.getElementById('duree_lbl').textContent=this.value+' ans'">
+      <div class="rv" id="duree_lbl">20 ans</div>
+      <label>Taux d'intérêt annuel (%)</label>
+      <input type="number" id="taux_pret" value="3.5" step="0.05" oninput="calc()">
+      <label>Assurance emprunteur (%/an du capital)</label>
+      <input type="number" id="taux_assur" value="0.25" step="0.05" oninput="calc()">
+    </div>
+    <div class="card">
+      <h3>Résultats prêt</h3>
+      <div class="kpi-grid">
+        <div class="kpi p"><div class="kl">Montant emprunté</div><div class="kv" id="k_emprunt">—</div></div>
+        <div class="kpi g"><div class="kl">Mensualité</div><div class="kv" id="k_mens">—</div></div>
+        <div class="kpi r"><div class="kl">Mensualité + assur.</div><div class="kv" id="k_mens_tot">—</div></div>
+        <div class="kpi y"><div class="kl">Coût total crédit</div><div class="kv" id="k_cout_credit">—</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Tableau d'amortissement (10 premières années)</h3>
+    <div style="overflow-x:auto">
+      <table class="t" id="amort_table">
+        <thead><tr><th>Année</th><th>Capital remb.</th><th>Intérêts</th><th>Assurance</th><th>Annuité totale</th><th>Capital restant dû</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 4. CHARGES & FISCAL ══════════ -->
+<div class="sec" id="sec-charges">
+  <h2>💶 Charges &amp; Fiscalité</h2>
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      <h3><span class="badge bn">NU</span> Location nue</h3>
+      <label>Loyer mensuel total (tous lots nus)</label>
+      <div id="loyer_nu_display" style="padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--accent);font-size:18px;font-weight:800;color:var(--green);margin-bottom:2px">— €/mois</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">⟵ Synchronisé en direct depuis l'onglet Rentabilité</div>
+      <label>Taux de vacance (%)</label>
+      <input type="range" id="vacance_nu" min="0" max="20" value="5" oninput="calc();document.getElementById('vac_nu_lbl').textContent=this.value+'%'">
+      <div class="rv" id="vac_nu_lbl">5%</div>
+      <label>Régime fiscal</label>
+      <select id="fiscal_nu" onchange="calc()">
+        <option value="micro">Micro-foncier (abattement 30%)</option>
+        <option value="reel">Régime réel</option>
+      </select>
+      <label>Tranche marginale d'imposition (TMI)</label>
+      <select id="tmi" onchange="calc()">
+        <option value="11">11%</option><option value="30" selected>30%</option>
+        <option value="41">41%</option><option value="45">45%</option>
+      </select>
+    </div>
+    <div class="card">
+      <h3><span class="badge bm">MEUBLÉ</span> LMNP</h3>
+      <label>Loyer mensuel total (tous lots meublés)</label>
+      <div id="loyer_mb_display" style="padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--green);font-size:18px;font-weight:800;color:var(--green);margin-bottom:2px">— €/mois</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px">⟵ Synchronisé en direct depuis l'onglet Rentabilité</div>
+      <label>Taux de vacance (%)</label>
+      <input type="range" id="vacance_mb" min="0" max="20" value="5" oninput="calc();document.getElementById('vac_mb_lbl').textContent=this.value+'%'">
+      <div class="rv" id="vac_mb_lbl">5%</div>
+      <label>Régime fiscal LMNP</label>
+      <select id="fiscal_mb" onchange="calc()">
+        <option value="micro">Micro-BIC (abattement 50%)</option>
+        <option value="reel">Réel simplifié (amortissements)</option>
+      </select>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h3>Charges annuelles</h3>
+    <div class="g3">
+      <div>
+        <label>Taxe foncière (€/an)</label><input type="number" id="taxe_f" value="1200" oninput="calc()">
+        <label>Charges copropriété (€/an)</label><input type="number" id="charges_copro" value="1500" oninput="calc()">
+        <label>Assurance PNO (€/an)</label><input type="number" id="assur_pno" value="400" oninput="calc()">
+      </div>
+      <div>
+        <label>Gestion locative (% loyer)</label><input type="number" id="gest_pct" value="8" step="0.5" oninput="calc()">
+        <label>GLI assurance loyers impayés (% loyer)</label><input type="number" id="gli_pct" value="3" step="0.5" oninput="calc()">
+        <label>Entretien annuel (€)</label><input type="number" id="entretien" value="500" oninput="calc()">
+      </div>
+      <div>
+        <label>Comptable LMNP (€/an)</label><input type="number" id="compta" value="600" oninput="calc()">
+        <label>Divers (€/an)</label><input type="number" id="divers" value="200" oninput="calc()">
+        <label>Revalorisation loyer/an (%)</label><input type="number" id="reval_loyer" value="1.5" step="0.1" oninput="calc()">
+      </div>
+    </div>
+  </div>
+  <!-- Résultats détaillés -->
+  <div class="kpi-grid">
+    <div class="kpi g"><div class="kl">Rdt net NU</div><div class="kv" id="r_net_nu">—</div></div>
+    <div class="kpi g"><div class="kl">Rdt net MEUBLÉ</div><div class="kv" id="r_net_mb">—</div></div>
+    <div class="kpi p"><div class="kl">Rdt net-net NU</div><div class="kv" id="r_nn_nu">—</div></div>
+    <div class="kpi p"><div class="kl">Rdt net-net MEUBLÉ</div><div class="kv" id="r_nn_mb">—</div></div>
+    <div class="kpi y"><div class="kl">Cash-flow NU /mois</div><div class="kv" id="cf_nu">—</div></div>
+    <div class="kpi y"><div class="kl">Cash-flow MEUBLÉ /mois</div><div class="kv" id="cf_mb">—</div></div>
+  </div>
+  <div class="card" style="margin-top:4px">
+    <h3>Comparatif détaillé NU vs MEUBLÉ</h3>
+    <div style="overflow-x:auto">
+      <table class="t" id="compare_table">
+        <thead><tr><th>Indicateur</th><th>Location Nue</th><th>LMNP Meublé</th><th>Écart</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL CATALOGUE ══════════ -->
+<div id="cat_overlay" onclick="closeCat()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100"></div>
+<div id="cat_modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(700px,95vw);max-height:80vh;background:var(--bg2);border:1px solid var(--border);border-radius:16px;z-index:101;overflow:hidden;flex-direction:column">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg3)">
+    <h3 id="cat_title" style="font-size:16px;font-weight:700;margin:0"></h3>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-a btn-sm" onclick="addSelected()">✚ Ajouter la sélection</button>
+      <button onclick="closeCat()" style="background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:0 4px">×</button>
+    </div>
+  </div>
+  <div id="cat_items" style="overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px"></div>
+  <div style="padding:12px 20px;border-top:1px solid var(--border);background:var(--bg3);font-size:12px;color:var(--text2)">
+    Cochez les postes souhaités puis cliquez <strong style="color:var(--accent)">Ajouter la sélection</strong>. Les quantités sont modifiables après ajout.
+  </div>
+</div>
+
+<!-- ══════════ 5. TRAVAUX ══════════ -->
+<div class="sec" id="sec-travaux">
+  <h2>🔨 Estimation des Travaux</h2>
+
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Coefficient ville</div>
+        <select id="coeff_ville" onchange="calcTrav()" style="width:auto">
+          <option value="0.80">Zone rurale (×0.80)</option>
+          <option value="0.90">Petite ville &lt;20k hab. (×0.90)</option>
+          <option value="1.00" selected>Ville moyenne (×1.00)</option>
+          <option value="1.10">Grande ville &gt;100k (×1.10)</option>
+          <option value="1.25">Métropole (Lyon, Marseille…) (×1.25)</option>
+          <option value="1.40">Paris / IDF (×1.40)</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Surface (m²)</div>
+        <input type="number" id="surf_trav" value="50" oninput="calcTrav()" style="width:80px">
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-a btn-sm" onclick="addTravRow()">+ Ligne vide</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Gros œuvre')">🏗️ Gros œuvre</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Menuiseries')">🪟 Menuiseries</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Murs & Plâtrerie')">🧱 Murs</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Électricité')">⚡ Électricité</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Plomberie')">🔧 Plomberie</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Cuisine')">🍳 Cuisine</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Salle de bain')">🚿 Salle de bain</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Sols')">🪵 Sols</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Peinture')">🎨 Peinture</button>
+        <button class="btn btn-ghost btn-sm" onclick="openCat('Ameublement')">🛋️ Ameublement</button>
+        <button class="btn btn-d btn-sm" onclick="clearTravaux()">🗑️ Vider</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto">
+    <table class="t" id="trav_table">
+      <thead>
+        <tr>
+          <th style="min-width:110px">Catégorie</th>
+          <th style="min-width:180px">Désignation</th>
+          <th style="min-width:55px">Unité</th>
+          <th style="min-width:60px">Qté</th>
+          <th style="min-width:90px;color:#aaa">Min HT/u (€)</th>
+          <th style="min-width:90px;color:#aaa">Max HT/u (€)</th>
+          <th style="min-width:60px">TVA</th>
+          <th style="min-width:100px;color:var(--yellow)">Total Min TTC</th>
+          <th style="min-width:100px;color:var(--yellow)">Total Max TTC</th>
+          <th style="min-width:110px;background:rgba(108,99,255,.15);color:var(--accent)">Coût estimé</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="trav_body"></tbody>
+    </table>
+  </div>
+
+  <div class="ttbar" style="margin-top:12px">
+    <div class="tb"><div class="tl">Total Min TTC</div><div class="tv" id="tt_min" style="color:var(--green)">0 €</div></div>
+    <div class="tb"><div class="tl">Total Max TTC</div><div class="tv" id="tt_max" style="color:var(--red)">0 €</div></div>
+    <div class="tb"><div class="tl">Coût estimé (moyenne)</div><div class="tv" id="tt_ttc">0 €</div></div>
+    <div class="tb"><div class="tl">Coût/m²</div><div class="tv" id="tt_m2">0 €/m²</div></div>
+    <div class="tb"><div class="tl">Coefficient appliqué</div><div class="tv" id="tt_coeff" style="color:var(--accent)">×1.00</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+    <div class="card">
+      <h3>🏗️ Total Travaux (hors ameublement)</h3>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span style="color:var(--text2)">Min</span><span style="color:var(--green);font-weight:700" id="tt_trav_min">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span style="color:var(--text2)">Max</span><span style="color:var(--red);font-weight:700" id="tt_trav_max">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;margin-top:8px;border-top:1px solid var(--border);padding-top:8px"><span style="font-weight:700">Estimé</span><span style="color:var(--yellow);font-weight:800" id="tt_trav_est">—</span></div>
+    </div>
+    <div class="card">
+      <h3>🛋️ Total Ameublement</h3>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span style="color:var(--text2)">Min</span><span style="color:var(--green);font-weight:700" id="tt_ameu_min">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin:4px 0"><span style="color:var(--text2)">Max</span><span style="color:var(--red);font-weight:700" id="tt_ameu_max">—</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px;margin-top:8px;border-top:1px solid var(--border);padding-top:8px"><span style="font-weight:700">Estimé</span><span style="color:var(--yellow);font-weight:800" id="tt_ameu_est">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 6. REVENTE ══════════ -->
+<div class="sec" id="sec-revente">
+  <h2>💰 Simulation Revente</h2>
+
+  <!-- Récap coûts auto -->
+  <div class="card" style="margin-bottom:14px">
+    <h3>📋 Coût total d'acquisition <small style="color:var(--text2);font-weight:400">(récupéré depuis l'onglet Rentabilité)</small></h3>
+    <div id="rv_recap_achat" style="font-size:13px"></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <!-- Paramètres revente -->
+    <div class="card">
+      <h3>🏷️ Vente du bien</h3>
+      <label>Année de revente prévue</label>
+      <input type="number" id="an_rev" value="10" min="1" max="30" oninput="calc()">
+      <label>Prix de revente (€)</label>
+      <input type="number" id="prix_revente_direct" value="220000" oninput="calc()">
+      <label>Frais d'agence revente (%)</label>
+      <input type="number" id="frais_rev_ag" value="5" step="0.5" oninput="calc()">
+      <label>Diagnostics / frais de cession (€)</label>
+      <input type="number" id="frais_diag" value="800" oninput="calc()">
+    </div>
+
+    <!-- Remboursement prêt + IRA -->
+    <div class="card">
+      <h3>🏦 Remboursement anticipé du prêt</h3>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Calculé automatiquement depuis l'onglet Financement</div>
+      <div id="rv_pret_detail" style="font-size:13px;line-height:2"></div>
+      <hr class="sep">
+      <label>IRA — Indemnités de Remboursement Anticipé</label>
+      <select id="ira_mode" onchange="calc()">
+        <option value="auto">Calcul automatique (légal : 6 mois d'intérêts, max 3% CRD)</option>
+        <option value="zero">Pas d'IRA (prêt sans pénalités)</option>
+        <option value="manuel">Montant manuel</option>
+      </select>
+      <div id="ira_manuel_row" style="display:none;margin-top:8px">
+        <label>IRA manuelle (€)</label>
+        <input type="number" id="ira_montant" value="0" oninput="calc()">
+      </div>
+      <div id="rv_ira_info" style="margin-top:8px;font-size:13px;color:var(--yellow);font-weight:600"></div>
+    </div>
+  </div>
+
+  <!-- Décompte revente -->
+  <div class="card" style="margin-bottom:14px">
+    <h3>🧾 Décompte complet</h3>
+    <div id="rv_decompte" style="font-size:13px"></div>
+  </div>
+
+  <!-- Résultats -->
+  <div class="kpi-grid">
+    <div class="kpi y"><div class="kl">Prix revente brut</div><div class="kv" id="rv_prix">—</div></div>
+    <div class="kpi r"><div class="kl">Capital restant dû</div><div class="kv" id="rv_crd">—</div></div>
+    <div class="kpi r"><div class="kl">IRA</div><div class="kv" id="rv_ira_kpi">—</div></div>
+    <div class="kpi g"><div class="kl">Plus-value brute</div><div class="kv" id="rv_pv">—</div></div>
+    <div class="kpi r"><div class="kl">Impôt + PS sur PV</div><div class="kv" id="rv_impot">—</div></div>
+    <div class="kpi g"><div class="kl">Net vendeur final</div><div class="kv" id="rv_net" style="font-size:20px">—</div></div>
+  </div>
+
+  <!-- ROI final -->
+  <div class="card" style="margin-top:14px">
+    <h3>🏆 ROI de l'opération</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+      <div class="kpi p"><div class="kl">Investissement total</div><div class="kv" id="roi_investi">—</div><div class="ks">apport + frais portés</div></div>
+      <div class="kpi g"><div class="kl">Net revente</div><div class="kv" id="roi_net_rev">—</div><div class="ks">après remb. + IRA + impôts</div></div>
+      <div class="kpi y"><div class="kl">ROI global</div><div class="kv" id="roi_final">—</div><div class="ks">sur apport investi</div></div>
+    </div>
+    <div id="rv_roi_detail" style="font-size:13px;line-height:2;color:var(--text2)"></div>
+    <div class="info" style="margin-top:10px">
+      <strong>Fiscalité PV particulier :</strong> Abattement IR 6%/an de la 6e à la 21e année, puis 4% la 22e (exonération totale IR à 22 ans). Prélèvements sociaux : abattement progressif sur 30 ans. Calcul appliqué automatiquement.
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ══════════ NAVIGATION ══════════
+function show(id, btn) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  calc();
+  if (id === 'marche') {
+    if (geoData) {
+      const addr = document.getElementById('adresse').value;
+      document.getElementById('adresse_marche').value = addr;
+      if (document.getElementById('marche_static').classList.contains('hidden')) lancerEtudeMarche();
+    }
+  }
+}
+
+// ══════════ LOTS ══════════
+let lots = [], lotId = 0;
+
+function addLot(data={desc:'Appartement T2', surf:45, type:'meuble', loyer:800, charges:80, vacance:5}) {
+  const id = ++lotId;
+  lots.push({id, ...data});
+  const el = document.createElement('div');
+  el.className = 'lot-row';
+  el.dataset.id = id;
+  el.style.cssText = 'display:grid;grid-template-columns:auto 1fr 80px 120px 90px 120px 80px 36px;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)';
+  el.innerHTML = `
+    <div class="lot-num">${id}</div>
+    <input type="text" value="${data.desc}" onchange="updLot(${id},'desc',this.value)" style="width:100%">
+    <input type="number" value="${data.surf}" oninput="updLot(${id},'surf',+this.value)" placeholder="m²">
+    <select onchange="updLot(${id},'type',this.value)">
+      <option value="nu" ${data.type==='nu'?'selected':''}>📄 Nue</option>
+      <option value="meuble" ${data.type==='meuble'?'selected':''}>🛋️ Meublée</option>
+      <option value="commercial" ${data.type==='commercial'?'selected':''}>🏢 Commercial</option>
+    </select>
+    <input type="number" value="${data.loyer}" oninput="updLot(${id},'loyer',+this.value)" placeholder="€/mois">
+    <input type="number" value="${data.charges}" oninput="updLot(${id},'charges',+this.value)" placeholder="€">
+    <input type="number" value="${data.vacance}" oninput="updLot(${id},'vacance',+this.value)" min="0" max="100" placeholder="%">
+    <button class="btn btn-d btn-sm" onclick="removeLot(${id})" style="padding:4px 8px">✕</button>`;
+  document.getElementById('lots_container').appendChild(el);
+  calc();
+}
+
+function updLot(id, field, val) {
+  const l = lots.find(l => l.id===id); if (l) l[field]=val; calc();
+}
+function removeLot(id) {
+  lots = lots.filter(l => l.id!==id);
+  document.querySelector(`[data-id="${id}"]`)?.remove();
+  calc();
+}
+
+// ══════════ APPORT ══════════
+function updateApport() {
+  const type = document.getElementById('apport_type').value;
+  const customRow = document.getElementById('apport_custom_row');
+  const info = document.getElementById('apport_info');
+  const prix = v('prix_achat');
+  const fraisNot = prix * v('pct_notaire') / 100;
+  if (type === 'zero') {
+    customRow.style.display = 'none';
+    document.getElementById('apport').value = 0;
+    info.innerHTML = '✅ Financement à <strong>100%</strong> — aucun apport personnel';
+  } else if (type === 'notaire') {
+    customRow.style.display = 'none';
+    document.getElementById('apport').value = Math.round(fraisNot);
+    info.innerHTML = `✅ Apport = frais de notaire : <strong style="color:var(--yellow)">${fmtE(fraisNot)}</strong> (${v('pct_notaire')}% de ${fmtE(prix)})`;
+  } else {
+    customRow.style.display = 'block';
+    info.innerHTML = '';
+  }
+  calc();
+}
+
+// ══════════ TRAVAUX ══════════
+let travRows = [], travId = 0;
+const CATS = ['Gros œuvre','Plâtrerie','Électricité','Plomberie','Chauffage/VMC','Cuisine','Salle de bain','Sols','Peinture','Menuiseries ext.','Menuiseries int.','Ameublement','Divers'];
+const UNITS = ['m²','ml','unité','forfait','jour'];
+
+function catOpts(s) { return CATS.map(c=>`<option ${c===s?'selected':''}>${c}</option>`).join(''); }
+function unitOpts(s) { return UNITS.map(u=>`<option ${u===s?'selected':''}>${u}</option>`).join(''); }
+function tvaOpts(s) { return [5.5,10,20].map(t=>`<option value="${t}" ${t==s?'selected':''}>${t}%</option>`).join(''); }
+
+function addTravRow(r={cat:'Peinture',desc:'',qty:1,unit:'m²',puMin:0,puMax:0,tva:10}) {
+  const id=++travId; travRows.push({id,...r});
+  const coeff = +document.getElementById('coeff_ville').value || 1;
+  const ttcMin = r.qty * r.puMin * (1+r.tva/100) * coeff;
+  const ttcMax = r.qty * r.puMax * (1+r.tva/100) * coeff;
+  const est = (ttcMin+ttcMax)/2;
+  const tr=document.createElement('tr'); tr.dataset.id=id;
+  tr.innerHTML=`
+    <td><select onchange="updTrav(${id},'cat',this.value)" style="font-size:12px">${catOpts(r.cat)}</select></td>
+    <td><input type="text" value="${r.desc}" onchange="updTrav(${id},'desc',this.value)" style="width:165px;font-size:12px"></td>
+    <td><select onchange="updTrav(${id},'unit',this.value)" style="font-size:12px;width:70px">${unitOpts(r.unit)}</select></td>
+    <td><input type="number" value="${r.qty}" min="0" oninput="updTrav(${id},'qty',+this.value)" style="width:55px"></td>
+    <td><input type="number" value="${r.puMin}" min="0" oninput="updTrav(${id},'puMin',+this.value)" style="width:80px;border-color:rgba(0,212,170,.4)"></td>
+    <td><input type="number" value="${r.puMax}" min="0" oninput="updTrav(${id},'puMax',+this.value)" style="width:80px;border-color:rgba(239,71,111,.4)"></td>
+    <td><select onchange="updTrav(${id},'tva',+this.value)" style="font-size:12px;width:65px">${tvaOpts(r.tva)}</select></td>
+    <td style="color:var(--green);font-weight:600;font-size:12px" id="tlt_min_${id}">${fmtE(ttcMin)}</td>
+    <td style="color:var(--red);font-weight:600;font-size:12px" id="tlt_max_${id}">${fmtE(ttcMax)}</td>
+    <td style="background:rgba(108,99,255,.08)"><input type="number" value="${Math.round(est)}" oninput="updTrav(${id},'est',+this.value)" style="width:90px;border-color:var(--accent);font-weight:700" id="tlt_est_${id}"></td>
+    <td><button class="btn btn-d btn-sm" onclick="removeTrav(${id})">✕</button></td>`;
+  document.getElementById('trav_body').appendChild(tr); calcTrav();
+}
+
+function updTrav(id,field,val) {
+  const r=travRows.find(r=>r.id===id); if(!r) return;
+  r[field]=val;
+  const coeff = +document.getElementById('coeff_ville').value || 1;
+  const ttcMin = r.qty * r.puMin * (1+r.tva/100) * coeff;
+  const ttcMax = r.qty * r.puMax * (1+r.tva/100) * coeff;
+  const est = (ttcMin+ttcMax)/2;
+  const eMin=document.getElementById('tlt_min_'+id); if(eMin) eMin.textContent=fmtE(ttcMin);
+  const eMax=document.getElementById('tlt_max_'+id); if(eMax) eMax.textContent=fmtE(ttcMax);
+  // N'écrase l'estimé que si l'utilisateur n'a pas saisi manuellement
+  if(field!=='est') { r.est=Math.round(est); const eEst=document.getElementById('tlt_est_'+id); if(eEst) eEst.value=Math.round(est); }
+  calcTrav();
+}
+
+function removeTrav(id) {
+  travRows=travRows.filter(r=>r.id!==id);
+  document.querySelector(`#trav_body tr[data-id="${id}"]`)?.remove();
+  calcTrav();
+}
+function clearTravaux() { travRows=[]; document.getElementById('trav_body').innerHTML=''; calcTrav(); }
+
+function calcTrav() {
+  const coeff = +document.getElementById('coeff_ville').value || 1;
+  let totMin=0, totMax=0, totEst=0;
+  let amMin=0, amMax=0, amEst=0;
+  travRows.forEach(r => {
+    const tMin=r.qty*r.puMin*(1+r.tva/100)*coeff;
+    const tMax=r.qty*r.puMax*(1+r.tva/100)*coeff;
+    const est = r.est !== undefined ? r.est : (tMin+tMax)/2;
+    // Recalc displayed cells with new coeff
+    const eMin=document.getElementById('tlt_min_'+r.id); if(eMin) eMin.textContent=fmtE(tMin);
+    const eMax=document.getElementById('tlt_max_'+r.id); if(eMax) eMax.textContent=fmtE(tMax);
+    if(r.est===undefined){ const eEst=document.getElementById('tlt_est_'+r.id); if(eEst) eEst.value=Math.round((tMin+tMax)/2); }
+    if(r.cat==='Ameublement'){ amMin+=tMin; amMax+=tMax; amEst+=est; }
+    else { totMin+=tMin; totMax+=tMax; totEst+=est; }
+  });
+  const grandMin=totMin+amMin, grandMax=totMax+amMax, grandEst=totEst+amEst;
+  set('tt_min', fmtE(grandMin));
+  set('tt_max', fmtE(grandMax));
+  set('tt_ttc', fmtE(grandEst));
+  set('tt_coeff', '×'+coeff.toFixed(2));
+  const s=+document.getElementById('surf_trav').value||1;
+  set('tt_m2', fmtE(grandEst/s)+'/m²');
+  set('tt_trav_min', fmtE(totMin)); set('tt_trav_max', fmtE(totMax)); set('tt_trav_est', fmtE(totEst));
+  set('tt_ameu_min', fmtE(amMin)); set('tt_ameu_max', fmtE(amMax)); set('tt_ameu_est', fmtE(amEst));
+  // Sync onglet Rentabilité
+  const inpTrav=document.getElementById('r_travaux'); if(inpTrav) inpTrav.value=Math.round(totEst);
+  const inpAmeu=document.getElementById('ameublement'); if(inpAmeu) inpAmeu.value=Math.round(amEst);
+  calc();
+}
+
+// ══════════ CATALOGUE TRAVAUX ══════════
+const CATALOGUE = {
+  'Gros œuvre': [
+    {desc:'Démolition cloisons (non porteuses)',qty:10,unit:'m²',puMin:25,puMax:60,tva:10},
+    {desc:'Démolition cloisons porteuses',qty:1,unit:'forfait',puMin:800,puMax:2500,tva:10},
+    {desc:'Ravalement façade',qty:1,unit:'forfait',puMin:2000,puMax:8000,tva:10},
+    {desc:'Reprise façade (enduit)',qty:30,unit:'m²',puMin:30,puMax:80,tva:10},
+    {desc:'Plancher béton / dalle',qty:30,unit:'m²',puMin:80,puMax:200,tva:10},
+    {desc:'Plancher bois structure',qty:30,unit:'m²',puMin:60,puMax:150,tva:10},
+    {desc:'Mezzanine bois (structure + plancher)',qty:15,unit:'m²',puMin:250,puMax:600,tva:10},
+    {desc:'Mezzanine métal (structure)',qty:1,unit:'forfait',puMin:3000,puMax:9000,tva:10},
+    {desc:'Toiture (réfection complète)',qty:1,unit:'forfait',puMin:5000,puMax:18000,tva:10},
+    {desc:'Toiture (réparation partielle)',qty:10,unit:'m²',puMin:80,puMax:200,tva:10},
+    {desc:'Isolation combles (soufflé)',qty:30,unit:'m²',puMin:20,puMax:50,tva:5.5},
+    {desc:'Isolation sous-sol / plancher bas',qty:30,unit:'m²',puMin:25,puMax:60,tva:5.5},
+    {desc:'Escalier bois sur mesure',qty:1,unit:'unité',puMin:2000,puMax:6000,tva:10},
+    {desc:'Escalier métal limon',qty:1,unit:'unité',puMin:3000,puMax:8000,tva:10},
+  ],
+  'Menuiseries': [
+    {desc:'Fenêtre PVC DV (80×120)',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'Fenêtre bois DV (80×120)',qty:1,unit:'unité',puMin:700,puMax:1600,tva:10},
+    {desc:'Fenêtre alu DV (80×120)',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
+    {desc:'Fenêtre TV (grande baie)',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
+    {desc:'Velux / fenêtre de toit',qty:1,unit:'unité',puMin:800,puMax:2000,tva:10},
+    {desc:'Baie vitrée coulissante PVC',qty:1,unit:'unité',puMin:1200,puMax:3500,tva:10},
+    {desc:'Baie vitrée coulissante alu',qty:1,unit:'unité',puMin:2000,puMax:6000,tva:10},
+    {desc:'Porte d\'entrée (bois/PVC)',qty:1,unit:'unité',puMin:800,puMax:2500,tva:10},
+    {desc:'Porte d\'entrée blindée',qty:1,unit:'unité',puMin:2000,puMax:5000,tva:10},
+    {desc:'Porte de garage sectionnelle',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
+    {desc:'Volets roulants PVC',qty:1,unit:'unité',puMin:300,puMax:700,tva:10},
+    {desc:'Volets roulants alu motorisé',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
+    {desc:'Volets battants bois',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
+    {desc:'Porte intérieure + huisserie + pose',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
+    {desc:'Cloison vitrée intérieure',qty:1,unit:'m²',puMin:300,puMax:800,tva:10},
+    {desc:'Pose fenêtre (main d\'oeuvre seule)',qty:1,unit:'unité',puMin:150,puMax:350,tva:10},
+  ],
+  'Murs & Plâtrerie': [
+    {desc:'Doublage mural isolation (BA13+isolant)',qty:30,unit:'m²',puMin:30,puMax:60,tva:10},
+    {desc:'Cloison placo 72mm',qty:15,unit:'m²',puMin:35,puMax:70,tva:10},
+    {desc:'Cloison placo phonique 98mm',qty:10,unit:'m²',puMin:50,puMax:90,tva:10},
+    {desc:'Faux plafond BA13',qty:20,unit:'m²',puMin:25,puMax:55,tva:10},
+    {desc:'Faux plafond modulaire',qty:20,unit:'m²',puMin:20,puMax:50,tva:10},
+    {desc:'Faïence murale salle de bain',qty:12,unit:'m²',puMin:35,puMax:90,tva:10},
+    {desc:'Enduit de rebouchage',qty:1,unit:'forfait',puMin:300,puMax:800,tva:10},
+    {desc:'Ragréage sol',qty:30,unit:'m²',puMin:8,puMax:20,tva:10},
+  ],
+  'Électricité': [
+    {desc:'Tableau électrique + disjoncteurs',qty:1,unit:'unité',puMin:800,puMax:1800,tva:10},
+    {desc:'Mise aux normes tableau',qty:1,unit:'forfait',puMin:1500,puMax:3500,tva:10},
+    {desc:'Gaines + câblage complet appartement',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
+    {desc:'Prise 2P+T (fournie + posée)',qty:1,unit:'unité',puMin:30,puMax:65,tva:10},
+    {desc:'Interrupteur va-et-vient',qty:1,unit:'unité',puMin:25,puMax:55,tva:10},
+    {desc:'VMC simple flux',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'VMC double flux',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
+    {desc:'Radiateur électrique à inertie',qty:1,unit:'unité',puMin:200,puMax:500,tva:10},
+    {desc:'Chauffe-eau électrique 100L',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'Chauffe-eau électrique 200L',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
+    {desc:'Pompe à chaleur air/air (split)',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
+    {desc:'Pompe à chaleur air/eau',qty:1,unit:'unité',puMin:6000,puMax:14000,tva:10},
+    {desc:'Alarme intrusion (kit)',qty:1,unit:'forfait',puMin:500,puMax:1500,tva:20},
+    {desc:'Détecteurs de fumée (DAAF)',qty:1,unit:'unité',puMin:20,puMax:50,tva:20},
+    {desc:'Borne de recharge VE',qty:1,unit:'unité',puMin:1200,puMax:3000,tva:10},
+  ],
+  'Plomberie': [
+    {desc:'Salle de bain complète (plomberie)',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
+    {desc:'WC + évacuation',qty:1,unit:'forfait',puMin:500,puMax:1400,tva:10},
+    {desc:'Chauffe-eau 100L',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'Chauffe-eau 200L',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
+    {desc:'Chaudière gaz condensation',qty:1,unit:'unité',puMin:3000,puMax:7000,tva:5.5},
+    {desc:'Radiateurs eau chaude + pose',qty:1,unit:'unité',puMin:300,puMax:700,tva:10},
+    {desc:'Plancher chauffant eau',qty:20,unit:'m²',puMin:60,puMax:130,tva:5.5},
+    {desc:'Adoucisseur eau',qty:1,unit:'unité',puMin:800,puMax:2000,tva:10},
+    {desc:'Ajout compteur eau',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'Colonne montante (réfection)',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
+  ],
+  'Cuisine': [
+    {desc:'Meubles bas 60cm',qty:4,unit:'unité',puMin:200,puMax:450,tva:20},
+    {desc:'Meubles hauts 60cm',qty:3,unit:'unité',puMin:150,puMax:350,tva:20},
+    {desc:'Colonne four / réfrigérateur',qty:1,unit:'unité',puMin:300,puMax:700,tva:20},
+    {desc:'Plan de travail stratifié',qty:3,unit:'ml',puMin:60,puMax:200,tva:20},
+    {desc:'Plan de travail pierre/quartz',qty:3,unit:'ml',puMin:200,puMax:700,tva:20},
+    {desc:'Évier inox 1 bac + robinetterie',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
+    {desc:'Crédence carrelage',qty:4,unit:'m²',puMin:50,puMax:130,tva:10},
+    {desc:'Crédence verre laqué',qty:1,unit:'m²',puMin:80,puMax:200,tva:20},
+    {desc:'Four encastrable',qty:1,unit:'unité',puMin:250,puMax:800,tva:20},
+    {desc:'Plaque de cuisson vitrocéramique',qty:1,unit:'unité',puMin:200,puMax:600,tva:20},
+    {desc:'Plaque induction',qty:1,unit:'unité',puMin:300,puMax:900,tva:20},
+    {desc:'Hotte aspirante',qty:1,unit:'unité',puMin:150,puMax:500,tva:20},
+    {desc:'Lave-vaisselle encastrable',qty:1,unit:'unité',puMin:350,puMax:900,tva:20},
+    {desc:'Réfrigérateur encastrable',qty:1,unit:'unité',puMin:400,puMax:1200,tva:20},
+    {desc:'Pose cuisine (main d\'oeuvre)',qty:1,unit:'forfait',puMin:800,puMax:2000,tva:10},
+  ],
+  'Salle de bain': [
+    {desc:'Receveur douche extra-plat',qty:1,unit:'unité',puMin:200,puMax:700,tva:10},
+    {desc:'Bac douche à l\'italienne',qty:1,unit:'forfait',puMin:600,puMax:1800,tva:10},
+    {desc:'Paroi douche verre',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
+    {desc:'Cabine douche intégrale',qty:1,unit:'unité',puMin:600,puMax:2000,tva:20},
+    {desc:'Baignoire encastrée',qty:1,unit:'unité',puMin:500,puMax:2000,tva:10},
+    {desc:'Meuble vasque 60cm + miroir',qty:1,unit:'forfait',puMin:400,puMax:1200,tva:20},
+    {desc:'Vasque à poser + robinetterie',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
+    {desc:'WC classique + réservoir',qty:1,unit:'unité',puMin:200,puMax:500,tva:10},
+    {desc:'WC suspendu + bâti-support',qty:1,unit:'unité',puMin:400,puMax:1000,tva:10},
+    {desc:'Carrelage mural faïence',qty:1,unit:'m²',puMin:35,puMax:100,tva:10},
+    {desc:'Carrelage sol antidérapant',qty:1,unit:'m²',puMin:40,puMax:110,tva:10},
+    {desc:'Sèche-serviettes électrique',qty:1,unit:'unité',puMin:150,puMax:450,tva:10},
+    {desc:'Plomberie salle de bain (MO)',qty:1,unit:'forfait',puMin:1200,puMax:3000,tva:10},
+  ],
+  'Sols': [
+    {desc:'Parquet stratifié 8mm (pose incluse)',qty:1,unit:'m²',puMin:20,puMax:55,tva:10},
+    {desc:'Parquet contrecollé (pose incluse)',qty:1,unit:'m²',puMin:50,puMax:120,tva:10},
+    {desc:'Parquet massif (pose incluse)',qty:1,unit:'m²',puMin:80,puMax:180,tva:10},
+    {desc:'Carrelage 30×30 (pose incluse)',qty:1,unit:'m²',puMin:35,puMax:80,tva:10},
+    {desc:'Carrelage 60×60 (pose incluse)',qty:1,unit:'m²',puMin:45,puMax:110,tva:10},
+    {desc:'Carrelage grand format 80×80',qty:1,unit:'m²',puMin:70,puMax:160,tva:10},
+    {desc:'Sol vinyle clipsable LVT',qty:1,unit:'m²',puMin:18,puMax:50,tva:10},
+    {desc:'Sous-couche acoustique',qty:1,unit:'m²',puMin:3,puMax:8,tva:10},
+    {desc:'Dépose anciens sols',qty:1,unit:'m²',puMin:8,puMax:20,tva:10},
+    {desc:'Ragréage + nivellement',qty:1,unit:'m²',puMin:10,puMax:25,tva:10},
+    {desc:'Plinthes MDF (fournie + posée)',qty:1,unit:'ml',puMin:5,puMax:18,tva:20},
+    {desc:'Seuil de passage',qty:1,unit:'unité',puMin:20,puMax:60,tva:20},
+  ],
+  'Peinture': [
+    {desc:'Enduit de lissage murs',qty:1,unit:'m²',puMin:8,puMax:20,tva:10},
+    {desc:'Peinture murs 2 couches',qty:1,unit:'m²',puMin:8,puMax:18,tva:10},
+    {desc:'Peinture plafonds 2 couches',qty:1,unit:'m²',puMin:10,puMax:22,tva:10},
+    {desc:'Peinture façade extérieure',qty:1,unit:'m²',puMin:15,puMax:40,tva:10},
+    {desc:'Reprise boiseries / baguettes',qty:1,unit:'forfait',puMin:300,puMax:800,tva:10},
+    {desc:'Papier peint (pose + fourniture)',qty:1,unit:'m²',puMin:20,puMax:55,tva:20},
+    {desc:'Béton ciré murs / sol',qty:1,unit:'m²',puMin:60,puMax:150,tva:10},
+  ],
+  'Ameublement': [
+    {desc:'Canapé 3 places / convertible',qty:1,unit:'unité',puMin:500,puMax:2000,tva:20},
+    {desc:'Table à manger',qty:1,unit:'unité',puMin:200,puMax:800,tva:20},
+    {desc:'Chaises (lot de 4)',qty:1,unit:'forfait',puMin:150,puMax:600,tva:20},
+    {desc:'Lit 140 + matelas + sommier',qty:1,unit:'forfait',puMin:500,puMax:1500,tva:20},
+    {desc:'Lit 160 + matelas + sommier',qty:1,unit:'forfait',puMin:700,puMax:2000,tva:20},
+    {desc:'Armoire 2 portes coulissantes',qty:1,unit:'unité',puMin:400,puMax:1200,tva:20},
+    {desc:'Commode / rangement',qty:1,unit:'unité',puMin:150,puMax:500,tva:20},
+    {desc:'Bureau + chaise',qty:1,unit:'forfait',puMin:200,puMax:700,tva:20},
+    {desc:'Réfrigérateur',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
+    {desc:'Lave-linge',qty:1,unit:'unité',puMin:350,puMax:900,tva:20},
+    {desc:'Sèche-linge',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
+    {desc:'Lave-vaisselle',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
+    {desc:'Micro-ondes',qty:1,unit:'unité',puMin:80,puMax:250,tva:20},
+    {desc:'Télévision',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
+    {desc:'Luminaires (lot)',qty:1,unit:'forfait',puMin:200,puMax:700,tva:20},
+    {desc:'Literie (draps, couettes, oreillers)',qty:1,unit:'forfait',puMin:200,puMax:500,tva:20},
+    {desc:'Rideaux / stores',qty:1,unit:'forfait',puMin:150,puMax:500,tva:20},
+    {desc:'Vaisselle / ustensiles cuisine',qty:1,unit:'forfait',puMin:100,puMax:300,tva:20},
+  ]
+};
+
+// ══════════ MODAL CATALOGUE ══════════
+function openCat(catName) {
+  document.getElementById('cat_title').textContent = catName;
+  const items = CATALOGUE[catName] || [];
+  const container = document.getElementById('cat_items');
+  container.innerHTML = items.map((item, i) => `
+    <label style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border);transition:border .15s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      <input type="checkbox" data-i="${i}" data-cat="${catName}" style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600">${item.desc}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px">${item.qty} ${item.unit} · Min <span style="color:var(--green)">${item.puMin}€</span> – Max <span style="color:var(--red)">${item.puMax}€</span> HT/u · TVA ${item.tva}%</div>
+      </div>
+      <div style="font-size:12px;color:var(--yellow);font-weight:700;white-space:nowrap">
+        ~${fmtE(item.qty*(item.puMin+item.puMax)/2*(1+item.tva/100))}
+      </div>
+    </label>`).join('');
+  document.getElementById('cat_overlay').style.display = 'block';
+  const modal = document.getElementById('cat_modal');
+  modal.style.display = 'flex';
+}
+
+function closeCat() {
+  document.getElementById('cat_overlay').style.display = 'none';
+  document.getElementById('cat_modal').style.display = 'none';
+}
+
+function addSelected() {
+  const checks = document.querySelectorAll('#cat_items input[type=checkbox]:checked');
+  checks.forEach(cb => {
+    const catName = cb.dataset.cat;
+    const i = +cb.dataset.i;
+    const item = CATALOGUE[catName][i];
+    const catMap = {
+      'Gros œuvre':'Gros œuvre','Menuiseries':'Menuiseries ext.','Murs & Plâtrerie':'Plâtrerie',
+      'Électricité':'Électricité','Plomberie':'Plomberie','Cuisine':'Cuisine',
+      'Salle de bain':'Salle de bain','Sols':'Sols','Peinture':'Peinture','Ameublement':'Ameublement'
+    };
+    addTravRow({cat: catMap[catName]||catName, desc:item.desc, qty:item.qty, unit:item.unit, puMin:item.puMin, puMax:item.puMax, tva:item.tva});
+  });
+  closeCat();
+}
+
+// ══════════ ADRESSE + GEOCODAGE ══════════
+let geoData = null;
+let adresseTimer = null;
+
+function onAdresseInput() {
+  const val = document.getElementById('adresse').value;
+  document.getElementById('adresse_marche').value = val;
+  clearTimeout(adresseTimer);
+  adresseTimer = setTimeout(() => geocodeAdresse(val), 600);
+}
+
+function syncAdresse(val) {
+  document.getElementById('adresse').value = val;
+}
+function onMarcheAdresseInput(val) {
+  document.getElementById('adresse').value = val;
+  geoData = null;
+  document.getElementById('marche_static').classList.add('hidden');
+  document.getElementById('dvf_result').classList.add('hidden');
+  document.getElementById('map_marche_wrap').style.display = 'none';
+}
+
+async function geocodeAdresse(addr) {
+  if (addr.length < 3) return;
+  const status = document.getElementById('addr_status');
+  status.innerHTML = '<span class="spinner"></span> Géocodage en cours…';
+  try {
+    // Essai 1 : recherche libre (adresse complète, ville, code postal)
+    let res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(addr)}&limit=1`);
+    let data = await res.json();
+    // Essai 2 : si pas de résultat, tenter comme municipalité
+    if (!data.features?.length) {
+      res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(addr)}&type=municipality&limit=1`);
+      data = await res.json();
+    }
+    if (data.features && data.features.length > 0) {
+      const f = data.features[0];
+      geoData = {
+        lat: f.geometry.coordinates[1], lon: f.geometry.coordinates[0],
+        label: f.properties.label, city: f.properties.city || f.properties.name,
+        postcode: f.properties.postcode || '', context: f.properties.context || ''
+      };
+      status.innerHTML = `✅ <span style="color:var(--green)">${geoData.label}</span>${geoData.context ? ` — <span style="color:var(--text2)">${geoData.context}</span>` : ''}`;
+      updateSiteLinks();
+    } else {
+      status.innerHTML = `⚠️ <span style="color:var(--yellow)">Localisation non trouvée — essayez avec le code postal ou la ville.</span>`;
+      geoData = null;
+    }
+  } catch(e) {
+    status.innerHTML = `❌ <span style="color:var(--red)">Erreur réseau — vérifiez votre connexion.</span>`;
+  }
+}
+
+// ══════════ ÉTUDE DE MARCHÉ ══════════
+async function lancerEtudeMarche() {
+  const adresse = document.getElementById('adresse_marche').value || document.getElementById('adresse').value;
+  const status = document.getElementById('marche_status');
+
+  if (!geoData && adresse.length > 2) {
+    status.innerHTML = '<span class="spinner"></span> Géocodage…';
+    await geocodeAdresse(adresse);
+  }
+  if (!geoData) {
+    status.innerHTML = '❌ Adresse non trouvée. Essayez avec juste la ville ou le code postal.';
+    updateSiteLinks(); return;
+  }
+
+  // Carte + estimations statiques + facteurs économiques (toujours)
+  initMap(geoData.lat, geoData.lon, geoData.label);
+  afficherEstimationsStatiques(geoData.postcode, geoData.city, geoData.context);
+  afficherFacteursEconomiques(geoData.city, geoData.postcode, geoData.context, geoData.lat, geoData.lon);
+  document.getElementById('marche_static').classList.remove('hidden');
+  updateSiteLinks();
+
+  const dist = document.getElementById('rayon_dvf').value;
+  status.innerHTML = `<span class="spinner"></span> Interrogation DVF pour <strong>${geoData.city || geoData.label}</strong>…`;
+
+  // Essai 1 — OpenDataSoft par nom de commune (plus fiable que geo)
+  try {
+    const commune = (geoData.city || geoData.label || '')
+      .toUpperCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g,'')
+      .replace(/'/g,' ').replace(/-/g,' ');
+    const where1 = encodeURIComponent(`nom_commune="${commune}" AND type_local in ("Appartement","Maison") AND valeur_fonciere > 0 AND surface_reelle_bati >= 10`);
+    const select = encodeURIComponent('date_mutation,type_local,surface_reelle_bati,valeur_fonciere,adresse_nom_voie,adresse_numero');
+    const url1 = `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime/records?where=${where1}&select=${select}&limit=100&order_by=date_mutation%20desc`;
+    const res1 = await fetch(url1);
+    if (!res1.ok) throw new Error('HTTP ' + res1.status);
+    const data1 = await res1.json();
+    const results1 = data1.results || [];
+    if (!results1.length) throw new Error('0 résultat pour ' + commune);
+    afficherDVF({results: results1}, dist);
+    status.innerHTML = `✅ <strong style="color:var(--green)">${results1.length} transactions DVF</strong> — commune de <strong>${geoData.city}</strong> · Source : OpenDataSoft`;
+    return;
+  } catch(e1) {
+    status.innerHTML = `<span class="spinner"></span> Essai source alternative… (${e1.message})`;
+  }
+
+  // Essai 2 — geo distance OpenDataSoft
+  try {
+    const where2 = encodeURIComponent(`dist(geo_point_2d, geom'POINT(${geoData.lon} ${geoData.lat})', ${dist}m) AND valeur_fonciere > 0 AND surface_reelle_bati >= 10`);
+    const select2 = encodeURIComponent('date_mutation,type_local,surface_reelle_bati,valeur_fonciere,adresse_nom_voie,adresse_numero');
+    const url2 = `https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/buildingref-france-demande-de-valeurs-foncieres-geolocalisee-millesime/records?where=${where2}&select=${select2}&limit=100&order_by=date_mutation%20desc`;
+    const res2 = await fetch(url2);
+    if (!res2.ok) throw new Error('HTTP ' + res2.status);
+    const data2 = await res2.json();
+    const results2 = data2.results || [];
+    if (!results2.length) throw new Error('0 résultat dans le rayon');
+    afficherDVF({results: results2}, dist);
+    status.innerHTML = `✅ <strong style="color:var(--green)">${results2.length} transactions DVF</strong> dans un rayon de ${dist} m — Source : OpenDataSoft`;
+    return;
+  } catch(e2) {
+    status.innerHTML = `<span class="spinner"></span> Dernier essai…`;
+  }
+
+  // Essai 3 — data.economie.gouv.fr
+  try {
+    const where3 = encodeURIComponent(`dist(geo_point_2d, geom'POINT(${geoData.lon} ${geoData.lat})', ${dist}m)`);
+    const url3 = `https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/dvf/records?where=${where3}&limit=100&order_by=date_mutation%20desc`;
+    const res3 = await fetch(url3);
+    if (!res3.ok) throw new Error('HTTP ' + res3.status);
+    const data3 = await res3.json();
+    const results3 = data3.results || [];
+    if (!results3.length) throw new Error('0 résultat');
+    afficherDVF({results: results3}, dist);
+    status.innerHTML = `✅ <strong style="color:var(--green)">${results3.length} transactions DVF</strong> — Source : data.economie.gouv.fr`;
+    return;
+  } catch(e3) {
+    document.getElementById('dvf_result').classList.add('hidden');
+    status.innerHTML = `⚠️ <span style="color:var(--yellow)">Transactions DVF en temps réel indisponibles (${e3.message}). Les estimations statistiques ci-dessous restent fiables.</span>`;
+  }
+}
+
+function afficherDVF(data, dist) {
+  const results = data.results || data || [];
+  const apparts = results.filter(r => r.type_local === 'Appartement' && r.surface_reelle_bati > 0 && r.valeur_fonciere > 0);
+  const maisons = results.filter(r => r.type_local === 'Maison' && r.surface_reelle_bati > 0 && r.valeur_fonciere > 0);
+
+  function stats(arr) {
+    if (!arr.length) return null;
+    const pm2 = arr.map(r => r.valeur_fonciere / r.surface_reelle_bati).sort((a,b)=>a-b);
+    const med = pm2[Math.floor(pm2.length/2)];
+    const avg = pm2.reduce((a,b)=>a+b,0)/pm2.length;
+    const min = pm2[0], max = pm2[pm2.length-1];
+    const p25 = pm2[Math.floor(pm2.length*0.25)];
+    const p75 = pm2[Math.floor(pm2.length*0.75)];
+    return {med,avg,min,max,p25,p75,n:arr.length};
+  }
+
+  function renderStats(containerId, nbId, st) {
+    const el = document.getElementById(containerId);
+    const nb = document.getElementById(nbId);
+    if (!st) { el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:12px">Aucune donnée disponible dans ce rayon.</div>'; nb.textContent=''; return; }
+    el.innerHTML = `
+      <div class="stat"><div class="sv">${Math.round(st.avg).toLocaleString('fr-FR')} €</div><div class="sl">Moyenne/m²</div></div>
+      <div class="stat"><div class="sv">${Math.round(st.med).toLocaleString('fr-FR')} €</div><div class="sl">Médiane/m²</div></div>
+      <div class="stat"><div class="sv">${Math.round(st.p25).toLocaleString('fr-FR')} €</div><div class="sl">25e perc./m²</div></div>
+      <div class="stat"><div class="sv">${Math.round(st.p75).toLocaleString('fr-FR')} €</div><div class="sl">75e perc./m²</div></div>
+      <div class="stat"><div class="sv">${Math.round(st.min).toLocaleString('fr-FR')} €</div><div class="sl">Min/m²</div></div>
+      <div class="stat"><div class="sv">${Math.round(st.max).toLocaleString('fr-FR')} €</div><div class="sl">Max/m²</div></div>
+    `;
+    nb.textContent = `${st.n} transactions analysées`;
+
+    // Estimation loyer
+    const loyer = document.getElementById('loyer_ref');
+    const surf = v('surface') || 50;
+    const loyerEst = Math.round(st.avg * surf * 0.005); // ~0.5% du prix pour loyer mensuel
+    const loyerMeub = Math.round(loyerEst * 1.2);
+    loyer.innerHTML = `
+      <div style="margin-bottom:8px;color:var(--text2)">Estimation basée sur le prix moyen du marché local (règle empirique ~0.4-0.6% du prix achat)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:13px">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px">
+          <div style="color:var(--text2);font-size:11px">Valeur bien (${surf}m²)</div>
+          <div style="font-size:18px;font-weight:700;color:var(--yellow)">${(Math.round(st.avg*surf/1000)*1000).toLocaleString('fr-FR')} €</div>
+          <div style="font-size:11px;color:var(--text2)">au prix médian du marché</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px">
+          <div style="color:var(--text2);font-size:11px">Loyer estimé NU</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${loyerEst.toLocaleString('fr-FR')} €/mois</div>
+          <div style="font-size:11px;color:var(--text2)">à confirmer sur leboncoin / SeLoger</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px">
+          <div style="color:var(--text2);font-size:11px">Loyer estimé MEUBLÉ</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)">${loyerMeub.toLocaleString('fr-FR')} €/mois</div>
+          <div style="font-size:11px;color:var(--text2)">+15-25% vs nu en général</div>
+        </div>
+      </div>`;
+  }
+
+  renderStats('stats_appart','nb_appart', stats(apparts));
+  renderStats('stats_maison','nb_maison', stats(maisons));
+
+  // Table transactions
+  const tbody = document.querySelector('#dvf_table tbody');
+  tbody.innerHTML = '';
+  const shown = results.filter(r=>r.surface_reelle_bati>0&&r.valeur_fonciere>0).slice(0,50);
+  shown.forEach(r => {
+    const pm2 = Math.round(r.valeur_fonciere/r.surface_reelle_bati);
+    const cl = pm2 > 5000 ? 'bad' : pm2 > 3000 ? 'warn' : 'good';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r.date_mutation?.slice(0,10)||'—'}</td><td>${r.type_local||'—'}</td><td>${r.surface_reelle_bati} m²</td><td>${Math.round(r.valeur_fonciere).toLocaleString('fr-FR')} €</td><td class="${cl}" style="font-weight:600">${pm2.toLocaleString('fr-FR')} €/m²</td><td style="color:var(--text2)">${r.adresse_numero||''} ${r.adresse_nom_voie||''}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('dvf_result').classList.remove('hidden');
+}
+
+function updateSiteLinks() {
+  const city    = geoData ? encodeURIComponent(geoData.city || geoData.label) : '';
+  const cp      = geoData ? (geoData.postcode || '') : '';
+  const lat     = geoData ? geoData.lat : 46.6;
+  const lon     = geoData ? geoData.lon : 2.3;
+  const citySlug = city.toLowerCase().replace(/%20/g,'-');
+
+  const sites = [
+    {
+      name:'DVF Officiel', color:'#6c63ff', desc:'Carte des transactions notariales',
+      url: geoData
+        ? `https://app.dvf.etalab.gouv.fr/?lat=${lat}&lon=${lon}&zoom=15`
+        : 'https://app.dvf.etalab.gouv.fr/'
+    },
+    {
+      name:'LeBonCoin', color:'#ff6600', desc:'Annonces vente entre particuliers',
+      url: city
+        ? `https://www.leboncoin.fr/recherche?category=9&locations=${city}`
+        : 'https://www.leboncoin.fr/ventes_immobilieres/'
+    },
+    {
+      name:'SeLoger', color:'#00a0e9', desc:'Annonces agences immobilières',
+      url: cp
+        ? `https://www.seloger.com/list.htm?types=1,2&projects=2&natures=1&places=[{cp:${cp}}]`
+        : 'https://www.seloger.com/'
+    },
+    {
+      name:'PAP', color:'#cc0000', desc:'Entre particuliers (location + vente)',
+      url: city
+        ? `https://www.pap.fr/annonce/ventes-immobilieres-${citySlug}-g${cp}`
+        : 'https://www.pap.fr/'
+    },
+    {
+      name:'Bien\'ici', color:'#2196f3', desc:'Toutes annonces agrégées',
+      url: geoData
+        ? `https://www.bienici.com/recherche/vente/france/appartement,maison?lat=${lat}&lng=${lon}&zoom=14`
+        : 'https://www.bienici.com/'
+    },
+    {
+      name:'MeilleursAgents', color:'#ff4444', desc:'Estimation valeur + tendances',
+      url: city
+        ? `https://www.meilleursagents.com/prix-immobilier/${citySlug}-${cp}/`
+        : 'https://www.meilleursagents.com/prix-immobilier/'
+    },
+    {
+      name:'Logic-Immo', color:'#e67e00', desc:'Annonces immobilières',
+      url: city
+        ? `https://www.logic-immo.com/vente-immobilier-${citySlug}_0-${cp}/`
+        : 'https://www.logic-immo.com/'
+    },
+    {
+      name:'Notaires de France', color:'#1a1a6e', desc:'Statistiques officielles notaires',
+      url:'https://www.immobilier.notaires.fr/fr/prix-immobilier'
+    },
+    {
+      name:'DVF+ Cerema', color:'#00796b', desc:'Analyse géographique avancée',
+      url:'https://dvf.cerema.fr/'
+    },
+    {
+      name:'Orpi', color:'#c0392b', desc:'Réseau agences Orpi',
+      url: city
+        ? `https://www.orpi.com/recherche/buy/?types%5B%5D=apartment&types%5B%5D=house&localizations%5B%5D=${city}`
+        : 'https://www.orpi.com/'
+    },
+  ];
+
+  const container = document.getElementById('site_links');
+  if (!container) return;
+  container.innerHTML = sites.map(s => `
+    <a href="${s.url}" target="_blank" rel="noopener noreferrer" class="site-link">
+      <span class="dot" style="background:${s.color}"></span>
+      <div>
+        <div style="font-weight:600">${s.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${s.desc}</div>
+      </div>
+    </a>`).join('');
+}
+
+// ══════════ CARTE DVF ══════════
+function initMap(lat, lon, label) {
+  const wrap = document.getElementById('map_marche_wrap');
+  wrap.style.display = 'block';
+  const mapDiv = document.getElementById('map_marche');
+  const src = `https://app.dvf.etalab.gouv.fr/?lat=${lat}&lon=${lon}&zoom=14`;
+  mapDiv.innerHTML = `<iframe src="${src}" style="width:100%;height:300px;border:none;display:block" loading="lazy" title="Carte DVF — ${label}"></iframe>`;
+}
+
+// ══════════ DONNÉES STATIQUES MARCHÉ ══════════
+const PRIX_DEPT = {
+  '75':{app:10800,mais:14000,lApp:30,lMais:28},'92':{app:7200,mais:7800,lApp:22,lMais:20},
+  '93':{app:3200,mais:3800,lApp:14,lMais:12},'94':{app:5200,mais:5800,lApp:19,lMais:17},
+  '77':{app:2800,mais:2600,lApp:13,lMais:11},'78':{app:3800,mais:3200,lApp:16,lMais:14},
+  '91':{app:2800,mais:2500,lApp:13,lMais:11},'95':{app:2800,mais:2600,lApp:13,lMais:11},
+  '06':{app:5200,mais:5800,lApp:18,lMais:16},'13':{app:3200,mais:3400,lApp:14,lMais:12},
+  '69':{app:4800,mais:4200,lApp:17,lMais:15},'67':{app:3600,mais:3200,lApp:15,lMais:13},
+  '68':{app:2600,mais:2800,lApp:13,lMais:11},'33':{app:3800,mais:3500,lApp:16,lMais:13},
+  '31':{app:3600,mais:3200,lApp:15,lMais:13},'44':{app:3200,mais:2900,lApp:14,lMais:12},
+  '34':{app:3200,mais:3000,lApp:14,lMais:12},'59':{app:2000,mais:1900,lApp:11,lMais:10},
+  '57':{app:1800,mais:1700,lApp:11,lMais:9},'54':{app:1600,mais:1500,lApp:10,lMais:9},
+  '76':{app:2000,mais:1900,lApp:11,lMais:10},'14':{app:2000,mais:2200,lApp:11,lMais:10},
+  '35':{app:2800,mais:2500,lApp:13,lMais:11},'29':{app:1800,mais:1900,lApp:10,lMais:9},
+  '56':{app:2500,mais:2800,lApp:12,lMais:11},'22':{app:1600,mais:1700,lApp:10,lMais:9},
+  '38':{app:2600,mais:2400,lApp:13,lMais:11},'74':{app:4200,mais:5000,lApp:17,lMais:16},
+  '73':{app:3000,mais:4500,lApp:14,lMais:13},'83':{app:3800,mais:4200,lApp:16,lMais:14},
+  '84':{app:2600,mais:3000,lApp:13,lMais:11},'04':{app:1600,mais:1800,lApp:9,lMais:9},
+  '05':{app:2000,mais:2500,lApp:10,lMais:10},'64':{app:2600,mais:2800,lApp:13,lMais:11},
+  '65':{app:1400,mais:1500,lApp:9,lMais:8},'66':{app:2000,mais:2200,lApp:11,lMais:10},
+  '11':{app:1600,mais:1700,lApp:9,lMais:8},'30':{app:2000,mais:2200,lApp:11,lMais:9},
+  '07':{app:1600,mais:1800,lApp:10,lMais:9},'26':{app:1800,mais:1900,lApp:10,lMais:9},
+  '01':{app:2200,mais:2400,lApp:12,lMais:10},'03':{app:1000,mais:1100,lApp:7,lMais:7},
+  '15':{app:800,mais:900,lApp:7,lMais:6},'43':{app:1200,mais:1100,lApp:8,lMais:7},
+  '63':{app:1500,mais:1600,lApp:9,lMais:8},'19':{app:1200,mais:1300,lApp:8,lMais:7},
+  '23':{app:700,mais:800,lApp:6,lMais:6},'87':{app:1200,mais:1100,lApp:8,lMais:7},
+  '24':{app:1400,mais:1600,lApp:9,lMais:8},'46':{app:1200,mais:1600,lApp:8,lMais:8},
+  '47':{app:1400,mais:1500,lApp:9,lMais:8},'82':{app:1200,mais:1300,lApp:8,lMais:7},
+  '81':{app:1400,mais:1400,lApp:9,lMais:8},'12':{app:1200,mais:1300,lApp:8,lMais:7},
+  '48':{app:1000,mais:1200,lApp:7,lMais:7},'02':{app:1400,mais:1300,lApp:9,lMais:8},
+  '08':{app:1200,mais:1200,lApp:8,lMais:7},'10':{app:1400,mais:1400,lApp:9,lMais:8},
+  '51':{app:1400,mais:1400,lApp:9,lMais:8},'52':{app:1000,mais:1100,lApp:7,lMais:7},
+  '55':{app:1000,mais:1100,lApp:7,lMais:7},'88':{app:1200,mais:1300,lApp:8,lMais:7},
+  '25':{app:2200,mais:2000,lApp:12,lMais:10},'70':{app:1200,mais:1200,lApp:8,lMais:7},
+  '39':{app:1400,mais:1500,lApp:9,lMais:8},'90':{app:1600,mais:1800,lApp:10,lMais:9},
+  '21':{app:2000,mais:2200,lApp:11,lMais:10},'58':{app:1000,mais:1100,lApp:7,lMais:7},
+  '71':{app:1200,mais:1400,lApp:8,lMais:7},'89':{app:1200,mais:1200,lApp:8,lMais:7},
+  '45':{app:1400,mais:1400,lApp:9,lMais:8},'28':{app:1800,mais:1800,lApp:10,lMais:9},
+  '41':{app:1400,mais:1600,lApp:9,lMais:8},'37':{app:2000,mais:2200,lApp:11,lMais:10},
+  '36':{app:900,mais:1000,lApp:7,lMais:6},'18':{app:1000,mais:1100,lApp:7,lMais:7},
+  '86':{app:1400,mais:1400,lApp:9,lMais:8},'79':{app:1200,mais:1300,lApp:8,lMais:7},
+  '85':{app:2000,mais:2200,lApp:11,lMais:10},'49':{app:2000,mais:2000,lApp:11,lMais:10},
+  '72':{app:1600,mais:1600,lApp:10,lMais:9},'53':{app:1400,mais:1400,lApp:9,lMais:8},
+  '50':{app:1600,mais:1900,lApp:10,lMais:9},'61':{app:1200,mais:1300,lApp:8,lMais:7},
+  '27':{app:1800,mais:1800,lApp:10,lMais:9},'60':{app:2000,mais:2000,lApp:11,lMais:10},
+  '80':{app:1400,mais:1400,lApp:9,lMais:8},'62':{app:1400,mais:1400,lApp:9,lMais:8},
+  '40':{app:3200,mais:3500,lApp:14,lMais:13},'32':{app:1200,mais:1300,lApp:8,lMais:7},
+  '09':{app:800,mais:900,lApp:6,lMais:6},'16':{app:1200,mais:1300,lApp:8,lMais:7},
+  '17':{app:2500,mais:3000,lApp:13,lMais:12},'20':{app:3000,mais:3500,lApp:14,lMais:13},
+  '2A':{app:3000,mais:3500,lApp:14,lMais:13},'2B':{app:2500,mais:3000,lApp:13,lMais:12},
+  '971':{app:1800,mais:2000,lApp:12,lMais:10},'972':{app:2000,mais:2200,lApp:13,lMais:11},
+  '973':{app:1400,mais:1600,lApp:10,lMais:9},'974':{app:2200,mais:2500,lApp:14,lMais:12},
+};
+const PRIX_DEFAUT = {app:1800,mais:2000,lApp:10,lMais:9};
+
+// Villes côtières connues par département (les autres = arrière-pays, prix plus bas)
+const COTE_VILLES = {
+  '83':['toulon','hyeres','frejus','saint-raphael','sainte-maxime','saint-tropez','bandol','sanary','le lavandou','cavalaire','cogolin','grimaud','la seyne','six-fours','bormes','rayol'],
+  '06':['nice','cannes','antibes','menton','juan','cagnes','villefranche','biot','roquebrune','beaulieu','eze','saint-jean-cap','mandelieu','theoule','la napoule'],
+  '13':['marseille','cassis','la ciotat','martigues','sausset','carry','la couronne','istres','port-saint-louis'],
+  '34':['montpellier','sete','agde','palavas','carnon','la grande-motte','frontignan','lavérune','mireval'],
+  '66':['perpignan','canet','saint-cyprien','argeles','collioure','banyuls','leucate','le barcares','torreilles','canet-en-roussillon'],
+  '30':['le grau-du-roi','aigues-mortes','port-camargue','la grande-motte'],
+  '40':['arcachon','cap-ferret','hossegor','capbreton','lacanau','mimizan','biscarrosse','seignosse','soorts'],
+  '64':['biarritz','bayonne','hendaye','saint-jean-de-luz','anglet','bidart','guethary'],
+  '85':['les sables','saint-jean-de-monts','noirmoutier','la tranche','saint-gilles-croix-de-vie'],
+  '17':['la rochelle','royan','saint-palais','chatelaillon','ile de re','ile d\'oleron','fouras','saint-georges'],
+  '56':['lorient','vannes','quiberon','la trinite-sur-mer','carnac','belle-ile','arradon','arzon'],
+  '29':['brest','quimper','concarneau','douarnenez','roscoff','camaret','fouesnant','benodet','audierne'],
+  '22':['saint-malo','perros-guirec','trebeurden','paimpol','binic','saint-quay','erquy','pordic'],
+  '14':['deauville','trouville','honfleur','cabourg','houlgate','villers-sur-mer','courseulles'],
+  '76':['le havre','etretat','dieppe','fecamp','saint-valery-en-caux','veules'],
+  '50':['cherbourg','granville','saint-vaast','barneville','carteret','avranches'],
+  '62':['le touquet','boulogne','calais','berck','wimereux','hardelot'],
+  '59':['dunkerque','gravelines','bray-dunes'],
+};
+// Facteurs de correction pour zones non-côtières dans les depts hétérogènes
+// Prix achat : écart fort entre côte et arrière-pays
+const INLAND_PRICE_FACTOR = {'83':0.52,'06':0.48,'13':0.62,'34':0.68,'40':0.65,'17':0.65,'64':0.72,'30':0.70,'85':0.78,'56':0.75,'29':0.80};
+// Loyers : écart plus faible (la demande locative locale reste soutenue)
+const INLAND_RENT_FACTOR  = {'83':0.80,'06':0.72,'13':0.82,'34':0.80,'40':0.80,'17':0.80,'64':0.83,'30':0.82,'85':0.85,'56':0.82,'29':0.87};
+
+function isCoastal(cityName, dept) {
+  const cn = (cityName||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  return (COTE_VILLES[dept]||[]).some(c => cn.includes(c.normalize('NFD').replace(/[̀-ͯ]/g,'')));
+}
+
+function getPrix(postcode, cityName) {
+  const dept = !postcode ? '' : postcode.startsWith('20') ? (postcode < '20200' ? '2A' : '2B') : postcode.slice(0,2);
+  const base = PRIX_DEPT[dept] || PRIX_DEFAUT;
+  const inland = INLAND_PRICE_FACTOR[dept] && !isCoastal(cityName, dept);
+  const pf = inland ? INLAND_PRICE_FACTOR[dept] : 1;
+  const rf = inland ? INLAND_RENT_FACTOR[dept]  : 1;
+  return {
+    app:  Math.round(base.app  * pf / 50) * 50,
+    mais: Math.round(base.mais * pf / 50) * 50,
+    lApp: Math.round(base.lApp * rf * 10) / 10,
+    lMais:Math.round(base.lMais* rf * 10) / 10,
+  };
+}
+
+function afficherEstimationsStatiques(postcode, cityName, context) {
+  const d = getPrix(postcode, cityName);
+  const surf = v('surface') || 60;
+  const dept = postcode ? postcode.slice(0,2) : '';
+  const zoneLabel = (INLAND_PRICE_FACTOR[dept] && !isCoastal(cityName, dept)) ? 'arrière-pays / zone intérieure' : `département ${dept||'?'}`;
+
+  function renderPrix(containerId, pm2, isLoyer) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const low = Math.round(pm2 * 0.82);
+    const high = Math.round(pm2 * 1.22);
+    el.innerHTML = `
+      <div class="est-box">
+        <div class="est-val">${pm2.toLocaleString('fr-FR')} €${isLoyer?'':'/m²'}</div>
+        <div class="est-rng">${low.toLocaleString('fr-FR')} – ${high.toLocaleString('fr-FR')} €${isLoyer?'/m²/mois':'/m²'}</div>
+        <div class="est-lbl">${isLoyer?'Loyer médian/m²':'Prix médian/m²'}</div>
+      </div>
+      <div class="est-box">
+        <div class="est-val">${isLoyer?(Math.round(pm2*surf)).toLocaleString('fr-FR')+' €':(Math.round(pm2*surf/1000)*1000).toLocaleString('fr-FR')+' €'}</div>
+        <div class="est-rng">${isLoyer?(Math.round(pm2*surf*0.82)).toLocaleString('fr-FR')+' – '+(Math.round(pm2*surf*1.22)).toLocaleString('fr-FR')+' €/mois':(Math.round(pm2*0.82*surf/1000)*1000).toLocaleString('fr-FR')+' – '+(Math.round(pm2*1.22*surf/1000)*1000).toLocaleString('fr-FR')+' €'}</div>
+        <div class="est-lbl">${isLoyer?`Pour ${surf} m²`:`Valeur bien ${surf} m²`}</div>
+      </div>`;
+  }
+
+  renderPrix('static_app_prix',  d.app,  false);
+  renderPrix('static_mais_prix', d.mais, false);
+  renderPrix('static_app_loyer', d.lApp, true);
+  renderPrix('static_mais_loyer',d.lMais,true);
+
+  // Mettre à jour la légende sous les cartes
+  document.querySelectorAll('#marche_static .card > div[style*="11px"]').forEach(el => {
+    if (el.textContent.includes('Notaires')) el.textContent = `Estimation ${zoneLabel} — Notaires de France / INSEE 2024`;
+    if (el.textContent.includes('CLAMEUR'))  el.textContent = `Estimation ${zoneLabel} — CLAMEUR / OLAP 2024`;
+  });
+}
+
+function afficherFacteursEconomiques(cityName, postcode, context, lat, lon) {
+  const el = document.getElementById('facteurs_eco');
+  if (!el) return;
+  const n  = (cityName||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const ctx= (context||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const dept = postcode ? postcode.slice(0,2) : '';
+  const coastal = isCoastal(cityName, dept);
+  const factors = [];
+  const has = (...w) => w.some(x => n.includes(x) || ctx.includes(x));
+
+  // ── Nucléaire / CEA ────────────────────────────────
+  const nucMap = {
+    'cadarache':4,'saint-paul-les-durance':4,'manosque':3,'vinon':3,'pierrevert':3,'gignac-la-nerthe':2,
+    'marcoule':4,'bagnols-sur-ceze':4,'chusclan':3,'codolet':3,
+    'pierrelatte':4,'tricastin':4,'saint-paul-trois-chateaux':3,
+    'flamanville':4,'beaumont-hague':4,'cherbourg':3,
+    'paluel':4,'saint-valery-en-caux':3,'fecamp':3,
+    'gravelines':4,'loon-plage':3,'dunkerque':3,
+    'cattenom':4,'thionville':3,'yutz':3,'metz':2,
+    'civaux':4,'vivonne':3,'lusignan':3,
+    'chinon':4,'avoine':4,'bourgueil':3,
+    'golfech':4,'valence-d-agen':3,'auvillar':3,
+    'bugey':4,'saint-vulbas':3,'loyettes':3,'ambronay':3,
+    'cruas':4,'meysse':3,'rochemaure':3,'montélimar':2,
+    'blayais':4,'braud-et-saint-louis':3,'saint-ciers-sur-gironde':3,
+    'fessenheim':3,'ottmarsheim':3,
+    'nogent-sur-seine':4,'romilly':3,
+    'penly':4,'dieppe':3,
+  };
+  const nucEntry = Object.entries(nucMap).find(([k]) => n.includes(k));
+  if (nucEntry) {
+    factors.push({icon:'⚛️',color:'#00d4aa',score:nucEntry[1],
+      title:'Zone nucléaire / CEA',
+      desc:`Site nucléaire ou CEA à proximité directe. Emplois très stables, ingénieurs et techniciens bien rémunérés. Demande locative soutenue et non saisonnière. Très bon pour la location longue durée.`});
+  }
+
+  // ── Technopôle / Grandes métropoles ───────────────
+  if (dept==='06' && has('sophia','valbonne','mougins','biot','antibes')) {
+    factors.push({icon:'💻',color:'#6c63ff',score:5,title:'Sophia Antipolis — 1er technopôle européen',desc:'30 000 salariés, IBM, Oracle, Amadeus… Demande locative très forte. Population internationale, fort turn-over favorable au meublé LMNP.'});
+  } else if (has('grenoble','gieres','meylan','crolles','bernin','montbonnot')) {
+    factors.push({icon:'🔬',color:'#6c63ff',score:5,title:'Technopôle Grenoble / Silicon Alps',desc:'CEA-Tech, STMicro, Schneider, Soitec. Tension locative forte, idéal pour colocation et meublé étudiant/chercheur.'});
+  } else if (dept==='31' && has('toulouse','labege','ramonville','blagnac','colomiers')) {
+    factors.push({icon:'🚀',color:'#6c63ff',score:5,title:'Toulouse — Capitale aéronautique',desc:'Airbus, Thales, Safran + 2e ville étudiante de France. Marché très tendu, croissance démographique record.'});
+  } else if (has('saclay','palaiseau','orsay','gif-sur-yvette','les ulis')) {
+    factors.push({icon:'🔬',color:'#6c63ff',score:4,title:'Plateau de Saclay — Pôle scientifique',desc:'CentraleSupélec, Polytechnique, HEC, INRIA, CEA. Marché locatif extrêmement tendu, loyers soutenus.'});
+  } else if (dept==='75') {
+    factors.push({icon:'🏙️',color:'#6c63ff',score:5,title:'Paris — Marché le plus sécurisé de France',desc:'Loyers encadrés, rendements faibles (3-4%) mais sécurité patrimoniale maximale. Plus-value structurelle à long terme. Idéal pour transmission.'});
+  } else if (dept==='69' && has('lyon','villeurbanne','bron','caluire','tassin')) {
+    factors.push({icon:'🏙️',color:'#6c63ff',score:5,title:'Lyon — 3e métropole, marché très tendu',desc:'Pôle économique, médical et universitaire. Vacance quasi nulle, loyers en hausse. Rendements 4-5% avec bonne sécurité.'});
+  } else if (dept==='13' && has('marseille','aix','aubagne','vitrolles','les pennes')) {
+    factors.push({icon:'🏙️',color:'#6c63ff',score:4,title:'Aire métropolitaine Aix-Marseille',desc:'2e métropole française. Zones en forte valorisation (Euroméditerranée, 2e arrondissement). Tension locative forte, bon rapport prix/loyer.'});
+  }
+
+  // ── Côte méditerranéenne (seulement si réellement côtier) ─
+  if (coastal && ['06','13','83','34','30','66','11'].includes(dept)) {
+    if (has('saint-tropez','ramatuelle','gassin','cogolin','grimaud','cavalaire','le lavandou')) {
+      factors.push({icon:'⛵',color:'#ff6584',score:5,title:'Golfe de Saint-Tropez — Tourisme ultra-premium',desc:'Clientèle internationale haut de gamme. Loyers saisonniers exceptionnels (été). Prix à l\'achat très élevés. Rentabilité annualisée à calculer soigneusement.'});
+    } else if (dept==='06') {
+      factors.push({icon:'🌊',color:'#ff6584',score:5,title:'Côte d\'Azur — Marché premium',desc:'Nice, Cannes, Antibes. Tourisme international 4 saisons. Location courte durée très active. Marché très tendu, prix élevés mais loyers proportionnels.'});
+    } else {
+      factors.push({icon:'🏖️',color:'#ffd166',score:4,title:'Littoral méditerranéen',desc:'Fort attrait touristique estival. Bon potentiel locatif saisonnier. Marché stable, demande résidentielle active hors-saison dans les villes centres.'});
+    }
+  }
+
+  // ── Côte Atlantique / Manche (seulement si côtier) ──
+  if (coastal && ['17','22','29','33','35','40','44','50','56','62','64','76','85','14'].includes(dept)) {
+    if (has('ile de re','ile-de-re') || (dept==='17' && (n.includes(' re') || n.includes('saint-martin')))) {
+      factors.push({icon:'🏝️',color:'#ffd166',score:5,title:'Île de Ré — Marché insulaire premium',desc:'Prix très élevés, forte demande résidentielle et touristique. Location saisonnière très rentable. Contraintes urbanistiques insulaires à anticiper.'});
+    } else if (dept==='64' && has('biarritz','saint-jean-de-luz','bidart','anglet')) {
+      factors.push({icon:'🏄',color:'#ffd166',score:5,title:'Côte Basque — Surf & art de vivre premium',desc:'Biarritz, Saint-Jean-de-Luz. Marché très prisé, clientèle aisée. Demande saisonnière forte + résidentielle permanente. Prix en hausse rapide.'});
+    } else if (dept==='33' && has('arcachon','cap-ferret','la teste','pyla')) {
+      factors.push({icon:'🏜️',color:'#ffd166',score:5,title:'Bassin d\'Arcachon — Dune du Pilat',desc:'Dune du Pilat : 1 million de visiteurs/an. Marché très prisé, ostréiculture. Location saisonnière très rentable. Prix en forte hausse.'});
+    } else {
+      factors.push({icon:'🌊',color:'#00d4aa',score:3,title:'Littoral Atlantique / Manche',desc:'Attractivité touristique saisonnière. Bonne demande résidentielle, exode urbain post-Covid. Bon rapport prix/loyer hors grandes métropoles.'});
+    }
+  }
+
+  // ── Arrière-pays provençal (dept 83/04/13 NON côtier) ─
+  if (['83','04','13'].includes(dept) && !coastal) {
+    const verdonProche = has('barjols','salernes','cotignac','aups','bauduen','moustiers','riez','valensole','gréoux','greoux','saint-maximin','brignoles','draguignan','lorgues','flayosc','villecroze','tourtour','montfort','artignosc','vinon','rians','tavernes','sillans');
+    if (verdonProche || has('verdon','haut-var','provence verte','sainte-baume')) {
+      factors.push({icon:'🌿',color:'#00d4aa',score:3,title:`Provence intérieure — Arrière-pays ${dept==='83'?'Varois':dept==='04'?'Alpin':'Provençal'}`,
+        desc:`Zone rurale provençale, loin de l'agitation côtière. Prix au m² bien plus accessibles qu'en bord de mer. Marché des résidences secondaires actif (clientèle parisienne, lyonnaise, nordiste). Bon potentiel pour gîtes et locations saisonnières estivales.`});
+    }
+    // Gorges du Verdon
+    if (has('barjols','salernes','aups','bauduen','moustiers','riez','artignosc','tavernes') || (dept==='83' && lat && lat > 43.5 && lon && lon < 6.3)) {
+      factors.push({icon:'🏞️',color:'#00d4aa',score:4,title:'Proche Gorges du Verdon',
+        desc:'Les Gorges du Verdon (escalade mondiale, kayak, randonnée) sont à 30-50 km. Flux touristique estival très fort qui rejaillit sur l\'arrière-pays. Fort potentiel pour les gîtes, chambres d\'hôtes et locations de courte durée de mai à septembre.'});
+    }
+  }
+
+  // ── Gorges du Verdon (dept 04 ou bord du Verdon) ──
+  if (dept==='04' && has('moustiers','castellane','aiguines','bauduen','sainte-croix','riez','quinson','rougon')) {
+    factors.push({icon:'🏞️',color:'#00d4aa',score:5,title:'Gorges du Verdon — Cœur du site',desc:'Destination outdoor de niveau mondial : escalade, canoë, randonnée, camping. Très fort flux touristique avril–octobre. Excellent pour la location saisonnière et le para-hôtelier.'});
+  }
+
+  // ── Gorges de l'Ardèche ───────────────────────────
+  if (dept==='07' && has('vallon','ruoms','aubenas','joyeuse','largentiere','vogüe')) {
+    factors.push({icon:'🚣',color:'#00d4aa',score:4,title:'Gorges de l\'Ardèche — Canoë & nature',desc:'1 million de visiteurs/an. Très forte saisonnalité estivale. Excellent pour gîtes, chambres d\'hôtes et locations saisonnières. Marché accessible avec bon potentiel locatif.'});
+  }
+
+  // ── Montagne & Ski ────────────────────────────────
+  const skiList = ['chamonix','megeve','courchevel','val-d isere','val d isere','tignes','les arcs','la plagne','meribel','morzine','les gets','la clusaz','saint-gervais','bourg-saint-maurice','val thorens','les deux alpes','alpe d huez','vars','risoul','montgenevre','serre chevalier','villard-de-lans','autrans','morillon','samoens','flaine','chatel','les carroz','avoriaz'];
+  if (skiList.some(r => n.includes(r))) {
+    factors.push({icon:'⛷️',color:'#6c63ff',score:5,title:'Station de ski — Tourisme 4 saisons',desc:'Fort potentiel locatif saisonnier (hiver ++) + été randonnée. Prix élevés. Idéal meublé touristique/para-hôtelier. Vérifier altitude et enneigement garanti.'});
+  } else if (['73','74'].includes(dept) && !coastal) {
+    factors.push({icon:'🏔️',color:'#6c63ff',score:4,title:'Alpes — Haute-Savoie / Savoie',desc:'Zone alpine premium. Annecy, Chambéry, Lac du Bourget. Tourisme montagne actif + frontaliers genevois. Marché tendu, bonne valorisation.'});
+  } else if (['04','05','38'].includes(dept) && !coastal && !factors.some(f=>f.title.includes('Verdon'))) {
+    factors.push({icon:'🏔️',color:'#6c63ff',score:3,title:'Zone préalpine',desc:'Montagne accessible, randonnée, ski de fond. Demande de résidences secondaires active. Bon rapport qualité/prix vs Alpes du nord.'});
+  } else if (['65','66'].includes(dept) && has('pyrenees','pyren','ski')) {
+    factors.push({icon:'🏔️',color:'#6c63ff',score:3,title:'Pyrénées',desc:'Stations de ski actives (hiver) + randonnée/vélo (été). Marché plus accessible que les Alpes. Bon potentiel en station ou à Lourdes.'});
+  }
+
+  // ── Viticulture ───────────────────────────────────
+  const wineMap = {'bordeaux':5,'saint-emilion':5,'pauillac':5,'margaux':5,'pomerol':5,'sauternes':4,'medoc':4,'beaune':5,'gevrey':4,'nuits-saint-georges':4,'meursault':4,'epernay':5,'reims':4,'ay':4,'colmar':4,'ribeauville':4,'riquewihr':4,'chateauneuf-du-pape':4,'gigondas':4,'vacqueras':4,'tavel':4,'sancerre':4,'vouvray':4,'cahors':4,'gaillac':3,'bandol':4,'cassis':3,'chablis':4,'macon':3,'jurançon':4,'banyuls':4};
+  const wineHit = Object.entries(wineMap).find(([k]) => n.includes(k));
+  if (wineHit) {
+    factors.push({icon:'🍷',color:'#ef476f',score:wineHit[1],title:`Vignoble — ${cityName}`,desc:`Zone viticole renommée. Tourisme œnotouristique actif, clientèle aisée. Résidences secondaires très recherchées. Loyers stables, marché peu volatil.`});
+  }
+
+  // ── Thermalisme ───────────────────────────────────
+  const thermalList = ['vichy','evian','vittel','contrexeville','divonne','dax','cambo','ax-les-thermes','amelie-les-bains','bagnoles','la bourboule','mont-dore','royat','chatel-guyon','thonon','aix-les-bains','greoux-les-bains','gréoux'];
+  if (thermalList.some(t => n.includes(t.normalize('NFD').replace(/[̀-ͯ]/g,'')))) {
+    factors.push({icon:'♨️',color:'#ff6584',score:3,title:'Station thermale',desc:'Tourisme de santé et bien-être. Clientèle régulière (avril-octobre). Bonne demande de meublé à la semaine. Marché stable, peu volatil.'});
+  }
+
+  // ── Frontalier ────────────────────────────────────
+  if (['74','01'].includes(dept) || has('annemasse','gex','ferney','thonon','saint-julien')) {
+    factors.push({icon:'🇨🇭',color:'#ffd166',score:5,title:'Zone frontalière Suisse — Genevois',desc:'50 000+ frontaliers genevois côté français. Pression locative extrême. Loyers parmi les plus élevés hors Paris. Taux de vacance quasi nul.'});
+  } else if (['57','54','55'].includes(dept) || has('luxembourg','thionville','longwy')) {
+    factors.push({icon:'🇱🇺',color:'#ffd166',score:4,title:'Zone frontalière Luxembourg / Allemagne',desc:'Frontaliers vers Luxembourg, Sarre, Moselle allemande. Emplois transfrontaliers stables. Marché locatif tendu sur les axes frontaliers.'});
+  } else if (['67','68'].includes(dept)) {
+    factors.push({icon:'🇩🇪',color:'#ffd166',score:3,title:'Alsace — Frontière germano-française',desc:'Strasbourg : capital européenne, fort attractivité touristique et économique. Mulhouse : industrie et frontaliers. Colmar : tourisme premium.'});
+  }
+
+  // ── Lourdes / Mont-Saint-Michel ───────────────────
+  if (n.includes('lourdes')) {
+    factors.push({icon:'✝️',color:'#ffd166',score:4,title:'Lourdes — 6M pèlerins/an',desc:'2e parc hôtelier de France après Paris. Marché locatif saisonnier intense (avril-octobre). Idéal pour meublé et para-hôtelier.'});
+  }
+  if (has('mont-saint-michel','pontorson','avranches')) {
+    factors.push({icon:'🏰',color:'#ffd166',score:4,title:'Mont-Saint-Michel — UNESCO',desc:'3 millions de visiteurs/an. Gîtes et chambres d\'hôtes très demandés dans un rayon de 30 km.'});
+  }
+
+  // ── Fontainebleau ─────────────────────────────────
+  if (has('fontainebleau','barbizon') || (dept==='77' && has('foret'))) {
+    factors.push({icon:'🧗',color:'#00d4aa',score:3,title:'Forêt de Fontainebleau — Escalade mondiale',desc:'Haut lieu mondial du bouldering. Flux international régulier. Résidences secondaires parisiennes actives. Marché soutenu par la proximité Paris.'});
+  }
+
+  // ── Rural / Aucun facteur fort ────────────────────
+  if (!factors.length) {
+    const isRuralDept = ['03','15','23','36','48','09','12','19','46','47','32','82','87','16','61','72','53','08','52','55','70','39','71','89','58','18','28','41','36','86','79'].includes(dept);
+    if (isRuralDept) {
+      factors.push({icon:'🌾',color:'var(--text2)',score:2,title:'Zone rurale — Marché détendu',desc:'Territoire à dominante agricole ou rurale. Marché peu tendu, prix très accessibles. Rendements bruts élevés (7-12%) mais liquidité plus faible. Analyser attentivement le bassin d\'emploi local.'});
+    } else {
+      factors.push({icon:'🏘️',color:'var(--text2)',score:2,title:'Ville moyenne — Marché intermédiaire',desc:'Marché sans facteur d\'attractivité exceptionnel identifié. Analyser : taux de chômage local, démographie INSEE, projets d\'urbanisme et tension locative réelle.'});
+    }
+    factors.push({icon:'📊',color:'var(--text2)',score:0,title:'Conseil analyste',desc:'Consultez data.gouv.fr (INSEE, CLCV) pour la démographie locale, le taux de vacance locative et les projets économiques en cours. Un investissement rentable hors-métropole repose avant tout sur la pérennité de la demande.'});
+  }
+
+  // ── Rendu ─────────────────────────────────────────
+  el.innerHTML = factors.map(f => {
+    const dots = Array.from({length:5},(_,i) => `<span class="dot-s${i<f.score?' on':''}"></span>`).join('');
+    return `<div class="facteur-card" style="border-left-color:${f.color}">
+      <div class="facteur-icon">${f.icon}</div>
+      <div style="flex:1">
+        <div class="facteur-title">${f.title}</div>
+        <div class="facteur-desc">${f.desc}</div>
+        <div class="score-dots">${dots}<span style="font-size:11px;color:var(--text2);margin-left:6px">Attractivité investisseur</span></div>
+      </div></div>`;
+  }).join('')+`<div class="info" style="margin-top:8px;font-size:12px"><strong>Analyse heuristique</strong> — Sources : INSEE, Notaires de France, CLAMEUR, CLCV. À compléter par une visite terrain.</div>`;
+}
+
+// ══════════ CALC PRINCIPAL ══════════
+function v(id) { return parseFloat(document.getElementById(id)?.value)||0; }
+
+function calc() {
+  const prix = v('prix_achat');
+  const fraisNot = prix * v('pct_notaire')/100;
+  const travaux = v('r_travaux');
+  const ameub = v('ameublement');
+  const fraisDoss = v('frais_dossier');
+  const autresFrais = v('autres_frais');
+  const coutTotal = prix + fraisNot + travaux + ameub + fraisDoss + autresFrais;
+  const surf = v('surface')||1;
+
+  // Recap
+  const recap = document.getElementById('recap_couts');
+  if (recap) {
+    recap.innerHTML = [
+      ['Prix d\'achat FAI', prix],
+      ['Frais de notaire ('+v('pct_notaire')+'%)', fraisNot],
+      ['Frais de dossier', fraisDoss],
+      ['Travaux', travaux],
+      ['Ameublement', ameub],
+      ['Autres frais', autresFrais],
+    ].map(([l,val]) => `<div style="display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${l}</span><span style="font-weight:600">${fmtE(val)}</span></div>`).join('') +
+    `<div style="display:flex;justify-content:space-between;padding:5px 0;margin-top:2px"><span style="font-weight:700">Total</span><span style="font-weight:800;color:var(--accent)">${fmtE(coutTotal)}</span></div>`;
+  }
+
+  set('k_cout_total', fmtE(coutTotal));
+  set('k_pm2', fmtE(coutTotal/surf)+'/m²');
+
+  // Lots — calcul loyers par type
+  let loyerMensTotal = 0, loyerAnBrut = 0, surfTotale = 0;
+  let loyerNuRaw = 0, loyerMbRaw = 0;
+  lots.forEach(l => {
+    const loyerNet = l.loyer * (1 - l.vacance/100);
+    loyerMensTotal += loyerNet;
+    loyerAnBrut += loyerNet * 12;
+    surfTotale += (l.surf||0);
+    if (l.type === 'nu') loyerNuRaw += l.loyer;
+    else loyerMbRaw += l.loyer;
+  });
+  // Sync affichages dans Charges & Fiscal
+  const nuDisp = document.getElementById('loyer_nu_display');
+  if (nuDisp) nuDisp.textContent = fmtE(loyerNuRaw) + '/mois' + (loyerNuRaw===0 ? ' — aucun lot nu' : ` (${lots.filter(l=>l.type==='nu').length} lot(s))`);
+  const mbDisp = document.getElementById('loyer_mb_display');
+  if (mbDisp) mbDisp.textContent = fmtE(loyerMbRaw) + '/mois' + (loyerMbRaw===0 ? ' — aucun lot meublé' : ` (${lots.filter(l=>l.type!=='nu').length} lot(s))`);
+
+  set('lots_count', lots.length);
+  set('loyer_total_disp', fmtE(loyerMensTotal)+'/mois');
+  set('k_loyer_an', fmtE(loyerAnBrut));
+  set('k_loyer_an_s', lots.length + ' lot(s) · vacance déduite');
+
+  const rendBrut = coutTotal > 0 ? loyerAnBrut/coutTotal*100 : 0;
+  const rendBrut2 = prix > 0 ? loyerAnBrut/prix*100 : 0;
+  set('k_rend_brut', pct(rendBrut));
+  set('k_rend_brut2', pct(rendBrut2));
+  const surfCalc = surfTotale > 0 ? surfTotale : surf;
+  set('k_loyer_m2', surfCalc > 0 ? fmtE(loyerMensTotal/surfCalc)+'/m²' : '—');
+
+  // Couleur rendement brut
+  colorRate('k_rend_brut', rendBrut);
+  colorRate('k_rend_brut2', rendBrut2);
+
+  // Règle 10/7/5
+  const rb = document.getElementById('regle_bloc');
+  if (rb) {
+    const c = (r, seuil) => r >= seuil ? '✅' : r >= seuil*0.8 ? '⚠️' : '❌';
+    rb.innerHTML = `
+      <div>${c(rendBrut,10)} <strong style="color:var(--green)">Règle des 10%</strong> — Objectif investisseur aguerri &nbsp;<span style="color:${rendBrut>=10?'var(--green)':rendBrut>=7?'var(--yellow)':'var(--red)'}">${pct(rendBrut)}</span></div>
+      <div>${c(rendBrut,7)} <strong style="color:var(--yellow)">Règle des 7%</strong> — Bon investissement &nbsp;<span style="color:${rendBrut>=7?'var(--green)':rendBrut>=5?'var(--yellow)':'var(--red)'}">${pct(rendBrut)}</span></div>
+      <div>${c(rendBrut,5)} <strong style="color:var(--red)">Règle des 5%</strong> — Seuil minimum rentable &nbsp;<span style="color:${rendBrut>=5?'var(--green)':'var(--red)'}">${pct(rendBrut)}</span></div>
+      <div style="margin-top:6px;font-size:12px;color:var(--text2)">Rendement brut calculé sur coût total (frais inclus)</div>`;
+  }
+
+  // Quick net
+  const qn = document.getElementById('quick_net');
+  if (qn) {
+    const chargesEstim = (v('taxe_f')||1200) + (v('charges_copro')||1500) + (v('assur_pno')||400) + (v('entretien')||500) + loyerAnBrut*0.08 + loyerAnBrut*0.03;
+    const revNetEstim = loyerAnBrut - chargesEstim;
+    const rendNet = coutTotal > 0 ? revNetEstim/coutTotal*100 : 0;
+    qn.innerHTML = `
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Loyer annuel brut</span><span style="color:var(--green)">${fmtE(loyerAnBrut)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Charges estimées</span><span style="color:var(--red)">- ${fmtE(chargesEstim)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-weight:700">Revenu net estimé</span><span style="font-weight:700;color:var(--yellow)">${fmtE(revNetEstim)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-weight:700">Rendement net estimé</span><span style="font-weight:700;color:var(--accent)">${pct(rendNet)}</span></div>`;
+  }
+
+  // ── APPORT AUTO ──
+  const apportType = document.getElementById('apport_type')?.value;
+  if (apportType === 'zero') {
+    document.getElementById('apport').value = 0;
+  } else if (apportType === 'notaire') {
+    document.getElementById('apport').value = Math.round(fraisNot);
+    const info = document.getElementById('apport_info');
+    if (info) info.innerHTML = `✅ Apport = frais de notaire : <strong style="color:var(--yellow)">${fmtE(fraisNot)}</strong>`;
+  }
+
+  // ── FINANCEMENT ──
+  const apport = v('apport');
+  const emprunt = Math.max(0, coutTotal - apport);
+  const duree = v('duree_pret');
+  const tauxM = v('taux_pret')/100/12;
+  const assurM = emprunt * v('taux_assur')/100/12;
+  const n = duree*12;
+  let mens = 0;
+  if (tauxM>0&&n>0) mens = emprunt*tauxM/(1-Math.pow(1+tauxM,-n));
+  else if (n>0) mens = emprunt/n;
+  const mensTotal = mens + assurM;
+  const coutCredit = mensTotal*n - emprunt;
+
+  set('k_emprunt', fmtE(emprunt));
+  set('k_mens', fmtE(mens)+'/mois');
+  set('k_mens_tot', fmtE(mensTotal)+'/mois');
+  set('k_cout_credit', fmtE(coutCredit));
+
+  // Amortissement
+  const amBody = document.querySelector('#amort_table tbody');
+  if (amBody) {
+    amBody.innerHTML=''; let crd=emprunt;
+    for(let y=1;y<=Math.min(10,duree);y++){
+      let cap=0,inter=0,ass=0;
+      for(let m=0;m<12;m++){
+        const i=crd*tauxM; const c=mens-i;
+        cap+=c; inter+=i; ass+=assurM; crd=Math.max(0,crd-c);
+      }
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>Année ${y}</td><td>${fmtE(cap)}</td><td style="color:var(--red)">${fmtE(inter)}</td><td style="color:var(--text2)">${fmtE(ass)}</td><td>${fmtE(mensTotal*12)}</td><td>${fmtE(Math.max(0,crd))}</td>`;
+      amBody.appendChild(tr);
+    }
+  }
+
+  // ── CHARGES & FISCAL — loyers directs depuis les lots ──
+  const loyerNuAn = loyerNuRaw * 12 * (1 - v('vacance_nu')/100);
+  const loyerMbAn = loyerMbRaw * 12 * (1 - v('vacance_mb')/100);
+  const taxeF=v('taxe_f'), copro=v('charges_copro'), pno=v('assur_pno');
+  const gestPct=v('gest_pct')/100, gliPct=v('gli_pct')/100, entret=v('entretien');
+  const compta=v('compta'), divers=v('divers');
+  const tmi=v('tmi')/100, ps=0.172;
+
+  const chargesBase = taxeF+copro+pno+entret+divers;
+  const chargesNu = chargesBase + loyerNuAn*gestPct + loyerNuAn*gliPct;
+  const chargesMb = chargesBase + loyerMbAn*gestPct + loyerMbAn*gliPct + compta;
+
+  let impotNu=0;
+  if(document.getElementById('fiscal_nu')?.value==='micro') impotNu=(loyerNuAn*0.7)*(tmi+ps);
+  else impotNu=Math.max(0,loyerNuAn-chargesNu)*(tmi+ps);
+
+  let impotMb=0;
+  if(document.getElementById('fiscal_mb')?.value==='micro') impotMb=(loyerMbAn*0.5)*(tmi+ps);
+  else { const amort=prix*0.03+travaux*0.1; impotMb=Math.max(0,loyerMbAn-chargesMb-amort)*(tmi+ps); }
+
+  const rendNetNu=coutTotal>0?(loyerNuAn-chargesNu)/coutTotal*100:0;
+  const rendNetMb=coutTotal>0?(loyerMbAn-chargesMb)/coutTotal*100:0;
+  const rendNNNu=coutTotal>0?(loyerNuAn-chargesNu-impotNu)/coutTotal*100:0;
+  const rendNNMb=coutTotal>0?(loyerMbAn-chargesMb-impotMb)/coutTotal*100:0;
+  const cfNu=(loyerNuAn-chargesNu-impotNu)/12-mensTotal;
+  const cfMb=(loyerMbAn-chargesMb-impotMb)/12-mensTotal;
+
+  set('r_net_nu', pct(rendNetNu)); set('r_net_mb', pct(rendNetMb));
+  set('r_nn_nu', pct(rendNNNu)); set('r_nn_mb', pct(rendNNMb));
+  setCF('cf_nu', cfNu); setCF('cf_mb', cfMb);
+
+  // Comparatif
+  const ctBody = document.querySelector('#compare_table tbody');
+  if(ctBody){
+    const rows=[
+      ['Loyer annuel effectif', loyerNuAn, loyerMbAn],
+      ['Charges annuelles', chargesNu, chargesMb],
+      ['Impôt estimé', impotNu, impotMb],
+      ['Revenu net annuel', loyerNuAn-chargesNu-impotNu, loyerMbAn-chargesMb-impotMb],
+      ['Mensualité prêt annuelle', mensTotal*12, mensTotal*12],
+      ['Cash-flow annuel', (loyerNuAn-chargesNu-impotNu)-mensTotal*12, (loyerMbAn-chargesMb-impotMb)-mensTotal*12],
+      ['Rendement brut', rendBrut, rendBrut, true],
+      ['Rendement net', rendNetNu, rendNetMb, true],
+      ['Rendement net-net', rendNNNu, rendNNMb, true],
+    ];
+    ctBody.innerHTML=rows.map(([l,nu,mb,isR])=>{
+      const d=mb-nu;
+      const f=x=>isR?pct(x):fmtE(x);
+      const cls=(x,r)=>isR?(x>=6?'good':x>=4?'warn':'bad'):(x>0?'good':x<0?'bad':'');
+      return `<tr><td>${l}</td><td class="val ${cls(nu,true)}">${f(nu)}</td><td class="val ${cls(mb,true)}">${f(mb)}</td><td class="${d>0?'good':d<0?'bad':'warn'}">${d>0?'+':''}${f(d)}</td></tr>`;
+    }).join('');
+  }
+
+  // ── REVENTE ──
+  const anRev = v('an_rev');
+  const prixRevente = v('prix_revente_direct');
+  const fraisRevAg = prixRevente * v('frais_rev_ag') / 100;
+  const fraisDiag = v('frais_diag');
+  const prixReventeNet = prixRevente - fraisRevAg - fraisDiag;
+
+  // Capital restant dû à l'année de revente
+  let crdRev = emprunt;
+  for (let m = 0; m < anRev * 12; m++) {
+    const i = crdRev * tauxM;
+    crdRev = Math.max(0, crdRev - (mens - i));
+  }
+
+  // IRA — Indemnités de Remboursement Anticipé
+  // Plafond légal : min(6 mois d'intérêts sur CRD, 3% du CRD)
+  const iraMode = document.getElementById('ira_mode')?.value || 'auto';
+  document.getElementById('ira_manuel_row').style.display = iraMode === 'manuel' ? 'block' : 'none';
+  let ira = 0;
+  if (iraMode === 'auto') {
+    const sixMoisInterets = crdRev * (v('taux_pret') / 100) * 0.5;
+    const plafond3pct = crdRev * 0.03;
+    ira = Math.min(sixMoisInterets, plafond3pct);
+  } else if (iraMode === 'manuel') {
+    ira = v('ira_montant');
+  }
+  const iraInfo = document.getElementById('rv_ira_info');
+  if (iraInfo) {
+    if (iraMode === 'auto' && crdRev > 0) {
+      const sm = crdRev*(v('taux_pret')/100)*0.5;
+      const p3 = crdRev*0.03;
+      iraInfo.textContent = `6 mois d'intérêts = ${fmtE(sm)}  |  3% CRD = ${fmtE(p3)}  →  IRA retenue : ${fmtE(ira)}`;
+    } else if (iraMode === 'zero') {
+      iraInfo.textContent = 'Aucune pénalité de remboursement anticipé.';
+    } else {
+      iraInfo.textContent = '';
+    }
+  }
+
+  // Plus-value et impôts
+  const prixAcquis = prix + fraisNot; // base fiscale PV
+  const pvBrute = prixRevente - prixAcquis;
+  let abatIR = 0, abatPS = 0;
+  if (anRev > 5) {
+    abatIR = anRev <= 21 ? (anRev - 5) * 0.06 : anRev === 22 ? 1 : 1;
+    abatIR = Math.min(1, abatIR);
+    for (let y = 6; y <= Math.min(anRev, 30); y++) abatPS += y <= 21 ? 0.0165 : y === 22 ? 0.016 : 0.09;
+    abatPS = Math.min(1, abatPS);
+  }
+  const pvImposableIR = pvBrute > 0 ? pvBrute * (1 - abatIR) : 0;
+  const pvImposablePS = pvBrute > 0 ? pvBrute * (1 - abatPS) : 0;
+  const impotPV = pvImposableIR * 0.19 + pvImposablePS * 0.172;
+  const netRevente = prixReventeNet - crdRev - ira - impotPV;
+
+  // Récap coûts acquisition
+  const recapEl = document.getElementById('rv_recap_achat');
+  if (recapEl) {
+    const lignes = [
+      ['Prix d\'achat FAI', prix, ''],
+      ['Frais de notaire (' + v('pct_notaire') + '%)', fraisNot, ''],
+      ['Frais de dossier', fraisDoss, ''],
+      ['Travaux', travaux, ''],
+      ['Ameublement', ameub, ''],
+      ['Autres frais', autresFrais, ''],
+    ];
+    recapEl.innerHTML = `<div style="display:grid;grid-template-columns:1fr auto;gap:4px 24px">` +
+      lignes.map(([l, val]) => `<span style="color:var(--text2)">${l}</span><span style="font-weight:600;text-align:right">${fmtE(val)}</span>`).join('') +
+      `<span style="font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:4px">Coût total d'acquisition</span>
+       <span style="font-weight:800;color:var(--accent);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;text-align:right">${fmtE(coutTotal)}</span>` +
+      `</div>`;
+  }
+
+  // Détail prêt
+  const pretEl = document.getElementById('rv_pret_detail');
+  if (pretEl) {
+    pretEl.innerHTML = `
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Montant emprunté</span><span>${fmtE(emprunt)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Capital restant dû (année ${anRev})</span><span style="color:var(--red);font-weight:700">${fmtE(crdRev)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--text2)">Déjà remboursé</span><span style="color:var(--green)">${fmtE(emprunt - crdRev)}</span></div>`;
+  }
+
+  // Décompte complet
+  const decomEl = document.getElementById('rv_decompte');
+  if (decomEl) {
+    const lignes2 = [
+      { l: 'Prix de revente brut', v: prixRevente, sign: '+', color: 'var(--green)' },
+      { l: `Frais d'agence revente (${v('frais_rev_ag')}%)`, v: fraisRevAg, sign: '−', color: 'var(--red)' },
+      { l: 'Diagnostics / frais de cession', v: fraisDiag, sign: '−', color: 'var(--red)' },
+      { l: `Capital restant dû (année ${anRev})`, v: crdRev, sign: '−', color: 'var(--red)' },
+      { l: 'IRA (indemnités remb. anticipé)', v: ira, sign: '−', color: 'var(--red)' },
+      { l: `Impôt PV (${Math.round((1-abatIR)*100)}% imposable IR · ${Math.round((1-abatPS)*100)}% imposable PS)`, v: impotPV, sign: '−', color: 'var(--red)' },
+    ];
+    decomEl.innerHTML = `<div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 16px;align-items:center">` +
+      lignes2.map(r => `
+        <span style="color:${r.color};font-weight:700;font-size:16px">${r.sign}</span>
+        <span style="color:var(--text2)">${r.l}</span>
+        <span style="font-weight:600;text-align:right;color:${r.color}">${fmtE(r.v)}</span>`).join('') +
+      `<span style="color:var(--yellow);font-weight:800;font-size:18px;border-top:1px solid var(--border);padding-top:8px;margin-top:4px">=</span>
+       <span style="font-weight:700;border-top:1px solid var(--border);padding-top:8px;margin-top:4px">Net vendeur final</span>
+       <span style="font-weight:800;color:${netRevente>=0?'var(--green)':'var(--red)'};font-size:18px;text-align:right;border-top:1px solid var(--border);padding-top:8px;margin-top:4px">${fmtE(netRevente)}</span>` +
+      `</div>`;
+  }
+
+  set('rv_prix', fmtE(prixRevente));
+  set('rv_crd', fmtE(crdRev));
+  set('rv_ira_kpi', fmtE(ira));
+  set('rv_pv', fmtE(pvBrute));
+  set('rv_impot', fmtE(impotPV));
+  set('rv_net', fmtE(netRevente));
+
+  // ROI final simple
+  const roiFinal = apport > 0 ? (netRevente - apport) / apport * 100 : 0;
+  set('roi_investi', fmtE(apport));
+  set('roi_net_rev', fmtE(netRevente));
+  set('roi_final', pct(roiFinal));
+  const roiEl = document.getElementById('roi_final');
+  if (roiEl) roiEl.style.color = roiFinal >= 0 ? 'var(--green)' : 'var(--red)';
+
+  const roiDetEl = document.getElementById('rv_roi_detail');
+  if (roiDetEl) {
+    const gain = netRevente - apport;
+    roiDetEl.innerHTML = `
+      <div>Apport investi : <strong style="color:var(--text)">${fmtE(apport)}</strong></div>
+      <div>Net revente : <strong style="color:${netRevente>=0?'var(--green)':'var(--red)'}">${fmtE(netRevente)}</strong></div>
+      <div>Gain / perte : <strong style="color:${gain>=0?'var(--green)':'var(--red)'}">${gain>=0?'+':''}${fmtE(gain)}</strong></div>
+      <div>ROI : <strong style="color:${roiFinal>=0?'var(--green)':'var(--red)'}">${roiFinal>=0?'+':''}${pct(roiFinal)}</strong> sur l'apport en ${anRev} ans</div>`;
+  }
+}
+
+function computeTRI(inv,cfAn,term,n){
+  if(n<=0||inv<=0) return 0;
+  let r=0.05;
+  for(let i=0;i<100;i++){
+    const npv=-inv+cfAn*((1-Math.pow(1+r,-n))/r)+term/Math.pow(1+r,n);
+    const d=cfAn*(n*Math.pow(1+r,-n-1)/r-(1-Math.pow(1+r,-n))/(r*r))-n*term/Math.pow(1+r,n+1);
+    const nr=r-npv/(d||.0001);
+    if(Math.abs(nr-r)<.0001){r=nr;break;}
+    r=Math.max(-0.5,Math.min(5,nr));
+  }
+  return r*100;
+}
+
+function fmtE(n){
+  if(isNaN(n)||!isFinite(n)) return '—';
+  return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+}
+function pct(n){return isNaN(n)||!isFinite(n)?'—':n.toFixed(2)+'%'}
+function set(id,val){const e=document.getElementById(id);if(e)e.textContent=val}
+function setCF(id,cf){const e=document.getElementById(id);if(e){e.textContent=fmtE(cf)+'/mois';e.style.color=cf>=0?'var(--green)':'var(--red)'}}
+function colorRate(id,v){const e=document.getElementById(id);if(e)e.style.color=v>=7?'var(--green)':v>=5?'var(--yellow)':'var(--red)'}
+
+// ── INIT ──
+updateSiteLinks();
+addLot({desc:'Appartement T2', surf:45, type:'meuble', loyer:800, charges:80, vacance:5});
+updateSiteLinks();
+calc();
+
+// Fermer modal avec Escape
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeCat(); });
+</script>
+</body>
+</html>
