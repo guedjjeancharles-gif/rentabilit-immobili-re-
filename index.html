@@ -312,6 +312,10 @@ table.t input[type=number]{width:90px}
       </div>
     </div>
     <div class="card" style="margin-bottom:14px">
+      <h3>👥 Profil socio-démographique</h3>
+      <div id="demo_socio" style="margin-top:10px"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
       <h3>🔎 Facteurs économiques &amp; attractivité</h3>
       <div id="facteurs_eco" style="margin-top:10px"></div>
     </div>
@@ -573,6 +577,13 @@ table.t input[type=number]{width:90px}
       <input type="number" id="frais_rev_ag" value="5" step="0.5" oninput="calc()">
       <label>Diagnostics / frais de cession (€)</label>
       <input type="number" id="frais_diag" value="800" oninput="calc()">
+      <label style="display:flex;align-items:center;gap:10px;margin-top:14px;padding:11px 13px;background:var(--bg3);border-radius:8px;cursor:pointer;border:1px solid var(--border)">
+        <input type="checkbox" id="residence_principale" onchange="calc()" style="width:16px;height:16px;accent-color:var(--accent);flex-shrink:0">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">🏠 Résidence principale</div>
+          <div style="font-size:11px;color:var(--text2)">Exonération totale de plus-value (art. 150 U CGI)</div>
+        </div>
+      </label>
     </div>
 
     <!-- Remboursement prêt + IRA -->
@@ -621,7 +632,7 @@ table.t input[type=number]{width:90px}
     </div>
     <div id="rv_roi_detail" style="font-size:13px;line-height:2;color:var(--text2)"></div>
     <div class="info" style="margin-top:10px">
-      <strong>Fiscalité PV particulier :</strong> Abattement IR 6%/an de la 6e à la 21e année, puis 4% la 22e (exonération totale IR à 22 ans). Prélèvements sociaux : abattement progressif sur 30 ans. Calcul appliqué automatiquement.
+      <strong>Fiscalité PV :</strong> Abattement IR 6%/an de la 6e à la 21e année, puis 4% la 22e (exonération totale IR à 22 ans). PS : abattement progressif sur 30 ans. <strong>Résidence principale :</strong> exonération totale et immédiate (cochez la case ci-dessus).
     </div>
   </div>
 </div>
@@ -788,152 +799,328 @@ function calcTrav() {
 // ══════════ CATALOGUE TRAVAUX ══════════
 const CATALOGUE = {
   'Gros œuvre': [
-    {desc:'Démolition cloisons (non porteuses)',qty:10,unit:'m²',puMin:25,puMax:60,tva:10},
-    {desc:'Démolition cloisons porteuses',qty:1,unit:'forfait',puMin:800,puMax:2500,tva:10},
-    {desc:'Ravalement façade',qty:1,unit:'forfait',puMin:2000,puMax:8000,tva:10},
-    {desc:'Reprise façade (enduit)',qty:30,unit:'m²',puMin:30,puMax:80,tva:10},
-    {desc:'Plancher béton / dalle',qty:30,unit:'m²',puMin:80,puMax:200,tva:10},
-    {desc:'Plancher bois structure',qty:30,unit:'m²',puMin:60,puMax:150,tva:10},
-    {desc:'Mezzanine bois (structure + plancher)',qty:15,unit:'m²',puMin:250,puMax:600,tva:10},
-    {desc:'Mezzanine métal (structure)',qty:1,unit:'forfait',puMin:3000,puMax:9000,tva:10},
-    {desc:'Toiture (réfection complète)',qty:1,unit:'forfait',puMin:5000,puMax:18000,tva:10},
-    {desc:'Toiture (réparation partielle)',qty:10,unit:'m²',puMin:80,puMax:200,tva:10},
-    {desc:'Isolation combles (soufflé)',qty:30,unit:'m²',puMin:20,puMax:50,tva:5.5},
-    {desc:'Isolation sous-sol / plancher bas',qty:30,unit:'m²',puMin:25,puMax:60,tva:5.5},
-    {desc:'Escalier bois sur mesure',qty:1,unit:'unité',puMin:2000,puMax:6000,tva:10},
-    {desc:'Escalier métal limon',qty:1,unit:'unité',puMin:3000,puMax:8000,tva:10},
+    {desc:'Démolition cloison légère',qty:10,unit:'m²',puMin:20,puMax:50,tva:10},
+    {desc:'Démolition cloison porteuse (avec IPN)',qty:1,unit:'forfait',puMin:1500,puMax:4500,tva:10},
+    {desc:'Ouverture mur porteur (linteau)',qty:1,unit:'forfait',puMin:2500,puMax:7000,tva:10},
+    {desc:'Ravalement façade (enduit projeté)',qty:1,unit:'m²',puMin:30,puMax:90,tva:10},
+    {desc:'Ravalement façade peinture',qty:1,unit:'m²',puMin:20,puMax:55,tva:10},
+    {desc:'Isolation thermique extérieure (ITE)',qty:1,unit:'m²',puMin:80,puMax:200,tva:5.5},
+    {desc:'Dalle béton / radier',qty:1,unit:'m²',puMin:90,puMax:220,tva:10},
+    {desc:'Plancher bois structure (solives)',qty:1,unit:'m²',puMin:70,puMax:170,tva:10},
+    {desc:'Mezzanine bois (structure + plancher)',qty:1,unit:'m²',puMin:280,puMax:650,tva:10},
+    {desc:'Mezzanine métal (sur-mesure)',qty:1,unit:'forfait',puMin:4000,puMax:12000,tva:10},
+    {desc:'Toiture tuiles (réfection complète)',qty:1,unit:'m²',puMin:120,puMax:280,tva:10},
+    {desc:'Toiture ardoises (réfection)',qty:1,unit:'m²',puMin:150,puMax:350,tva:10},
+    {desc:'Toiture zinc / bac acier',qty:1,unit:'m²',puMin:100,puMax:250,tva:10},
+    {desc:'Toiture (réparation partielle)',qty:1,unit:'m²',puMin:80,puMax:180,tva:10},
+    {desc:'Charpente bois (réfection)',qty:1,unit:'m²',puMin:60,puMax:160,tva:10},
+    {desc:'Isolation combles soufflée',qty:1,unit:'m²',puMin:20,puMax:45,tva:5.5},
+    {desc:'Isolation combles perdus (rouleaux)',qty:1,unit:'m²',puMin:15,puMax:35,tva:5.5},
+    {desc:'Isolation sous-rampants',qty:1,unit:'m²',puMin:40,puMax:90,tva:5.5},
+    {desc:'Isolation plancher bas / sous-sol',qty:1,unit:'m²',puMin:25,puMax:65,tva:5.5},
+    {desc:'Escalier béton (brut)',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
+    {desc:'Escalier bois sur mesure',qty:1,unit:'forfait',puMin:2500,puMax:7000,tva:10},
+    {desc:'Escalier métal limon central',qty:1,unit:'forfait',puMin:3500,puMax:10000,tva:10},
+    {desc:'Terrasse béton (dalle)',qty:1,unit:'m²',puMin:60,puMax:140,tva:10},
+    {desc:'Extension plain-pied maçonnée',qty:1,unit:'m²',puMin:900,puMax:2200,tva:10},
+    {desc:'Sous-sol / cave (création)',qty:1,unit:'m²',puMin:1500,puMax:4000,tva:10},
+    {desc:'Piscine enterrée béton (coque)',qty:1,unit:'forfait',puMin:22000,puMax:55000,tva:10},
+    {desc:'Portail motorisé (4m)',qty:1,unit:'unité',puMin:1800,puMax:5000,tva:10},
+    {desc:'Clôture maçonnée',qty:1,unit:'ml',puMin:120,puMax:380,tva:10},
+    {desc:'Traitement humidité / injection',qty:1,unit:'ml',puMin:80,puMax:200,tva:10},
+    {desc:'Micropieux / reprise en sous-œuvre',qty:1,unit:'forfait',puMin:5000,puMax:20000,tva:10},
   ],
-  'Menuiseries': [
-    {desc:'Fenêtre PVC DV (80×120)',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
-    {desc:'Fenêtre bois DV (80×120)',qty:1,unit:'unité',puMin:700,puMax:1600,tva:10},
-    {desc:'Fenêtre alu DV (80×120)',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
-    {desc:'Fenêtre TV (grande baie)',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
-    {desc:'Velux / fenêtre de toit',qty:1,unit:'unité',puMin:800,puMax:2000,tva:10},
-    {desc:'Baie vitrée coulissante PVC',qty:1,unit:'unité',puMin:1200,puMax:3500,tva:10},
-    {desc:'Baie vitrée coulissante alu',qty:1,unit:'unité',puMin:2000,puMax:6000,tva:10},
-    {desc:'Porte d\'entrée (bois/PVC)',qty:1,unit:'unité',puMin:800,puMax:2500,tva:10},
-    {desc:'Porte d\'entrée blindée',qty:1,unit:'unité',puMin:2000,puMax:5000,tva:10},
-    {desc:'Porte de garage sectionnelle',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
-    {desc:'Volets roulants PVC',qty:1,unit:'unité',puMin:300,puMax:700,tva:10},
-    {desc:'Volets roulants alu motorisé',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
-    {desc:'Volets battants bois',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
-    {desc:'Porte intérieure + huisserie + pose',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
-    {desc:'Cloison vitrée intérieure',qty:1,unit:'m²',puMin:300,puMax:800,tva:10},
-    {desc:'Pose fenêtre (main d\'oeuvre seule)',qty:1,unit:'unité',puMin:150,puMax:350,tva:10},
+  'Menuiseries ext.': [
+    {desc:'Fenêtre PVC DV 2 vantaux (80×120)',qty:1,unit:'unité',puMin:450,puMax:950,tva:10},
+    {desc:'Fenêtre PVC triple vitrage (80×120)',qty:1,unit:'unité',puMin:650,puMax:1350,tva:10},
+    {desc:'Fenêtre alu DV (80×120)',qty:1,unit:'unité',puMin:700,puMax:1600,tva:10},
+    {desc:'Fenêtre bois DV (80×120)',qty:1,unit:'unité',puMin:800,puMax:1800,tva:10},
+    {desc:'Grande fenêtre fixe (panoramique)',qty:1,unit:'unité',puMin:1800,puMax:5000,tva:10},
+    {desc:'Velux / fenêtre de toit (standard)',qty:1,unit:'unité',puMin:900,puMax:2200,tva:10},
+    {desc:'Velux électrique (télécommande)',qty:1,unit:'unité',puMin:1400,puMax:3200,tva:10},
+    {desc:'Baie vitrée coulissante PVC (3m)',qty:1,unit:'unité',puMin:1400,puMax:3800,tva:10},
+    {desc:'Baie vitrée coulissante alu (3m)',qty:1,unit:'unité',puMin:2500,puMax:7000,tva:10},
+    {desc:'Baie vitrée galandage (3m)',qty:1,unit:'unité',puMin:3500,puMax:9000,tva:10},
+    {desc:'Porte d\'entrée PVC/bois (standard)',qty:1,unit:'unité',puMin:900,puMax:2800,tva:10},
+    {desc:'Porte d\'entrée blindée (A2P BP2)',qty:1,unit:'unité',puMin:2200,puMax:6000,tva:10},
+    {desc:'Porte d\'entrée alu design',qty:1,unit:'unité',puMin:2500,puMax:7000,tva:10},
+    {desc:'Porte de garage sectionnelle motorisée',qty:1,unit:'unité',puMin:1800,puMax:5000,tva:10},
+    {desc:'Volet roulant PVC (motorisé)',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
+    {desc:'Volet roulant alu motorisé (solaire)',qty:1,unit:'unité',puMin:700,puMax:1600,tva:10},
+    {desc:'Volet battant bois',qty:1,unit:'unité',puMin:280,puMax:700,tva:10},
+    {desc:'Volet battant alu',qty:1,unit:'unité',puMin:350,puMax:850,tva:10},
+    {desc:'Store banne motorisé',qty:1,unit:'unité',puMin:1200,puMax:3500,tva:20},
+    {desc:'Pergola bioclimatique (lames orientables)',qty:1,unit:'m²',puMin:400,puMax:1200,tva:20},
+    {desc:'Véranda alu (structure + vitrage)',qty:1,unit:'m²',puMin:900,puMax:2500,tva:20},
+    {desc:'Garde-corps verre (balcon/terrasse)',qty:1,unit:'ml',puMin:200,puMax:600,tva:10},
+    {desc:'Pose fenêtre (main d\'oeuvre seule)',qty:1,unit:'unité',puMin:180,puMax:380,tva:10},
+  ],
+  'Menuiseries int.': [
+    {desc:'Porte intérieure + huisserie + pose',qty:1,unit:'unité',puMin:280,puMax:700,tva:10},
+    {desc:'Porte coulissante galandage',qty:1,unit:'unité',puMin:600,puMax:1600,tva:10},
+    {desc:'Porte coulissante en applique',qty:1,unit:'unité',poMin:350,puMin:350,puMax:900,tva:10},
+    {desc:'Placard sur mesure (menuisier)',qty:1,unit:'ml',puMin:600,puMax:1800,tva:20},
+    {desc:'Dressing sur mesure',qty:1,unit:'ml',puMin:800,puMax:2500,tva:20},
+    {desc:'Bibliothèque sur mesure',qty:1,unit:'ml',puMin:500,puMax:1500,tva:20},
+    {desc:'Cloison vitrée atelier (acier noir)',qty:1,unit:'m²',puMin:450,puMax:1200,tva:10},
+    {desc:'Verrière intérieure (style atelier)',qty:1,unit:'unité',puMin:1500,puMax:5000,tva:10},
+    {desc:'Parquet contre-collé (fourni + posé)',qty:1,unit:'m²',puMin:55,puMax:130,tva:10},
+    {desc:'Parquet massif chêne (fourni + posé)',qty:1,unit:'m²',puMin:90,puMax:200,tva:10},
+    {desc:'Habillage escalier (marches + contremarches)',qty:1,unit:'unité',puMin:80,puMax:200,tva:10},
+    {desc:'Main courante bois (fournie + posée)',qty:1,unit:'ml',puMin:80,puMax:220,tva:10},
+    {desc:'Habillage sous-escalier (rangement)',qty:1,unit:'forfait',puMin:600,puMax:1800,tva:20},
   ],
   'Murs & Plâtrerie': [
-    {desc:'Doublage mural isolation (BA13+isolant)',qty:30,unit:'m²',puMin:30,puMax:60,tva:10},
-    {desc:'Cloison placo 72mm',qty:15,unit:'m²',puMin:35,puMax:70,tva:10},
-    {desc:'Cloison placo phonique 98mm',qty:10,unit:'m²',puMin:50,puMax:90,tva:10},
-    {desc:'Faux plafond BA13',qty:20,unit:'m²',puMin:25,puMax:55,tva:10},
-    {desc:'Faux plafond modulaire',qty:20,unit:'m²',puMin:20,puMax:50,tva:10},
-    {desc:'Faïence murale salle de bain',qty:12,unit:'m²',puMin:35,puMax:90,tva:10},
-    {desc:'Enduit de rebouchage',qty:1,unit:'forfait',puMin:300,puMax:800,tva:10},
-    {desc:'Ragréage sol',qty:30,unit:'m²',puMin:8,puMax:20,tva:10},
+    {desc:'Doublage mural isolation (BA13 + 80mm)',qty:1,unit:'m²',puMin:32,puMax:70,tva:10},
+    {desc:'Doublage isolation renforcée (120mm)',qty:1,unit:'m²',puMin:45,puMax:95,tva:10},
+    {desc:'Cloison placo standard 72mm',qty:1,unit:'m²',puMin:35,puMax:72,tva:10},
+    {desc:'Cloison phonique 98mm',qty:1,unit:'m²',puMin:55,puMax:100,tva:10},
+    {desc:'Cloison carreau de plâtre 70mm',qty:1,unit:'m²',puMin:45,puMax:85,tva:10},
+    {desc:'Faux plafond BA13 (standard)',qty:1,unit:'m²',puMin:28,puMax:60,tva:10},
+    {desc:'Faux plafond plâtre (décoratif)',qty:1,unit:'m²',puMin:50,puMax:120,tva:10},
+    {desc:'Faux plafond modulaire dalles',qty:1,unit:'m²',puMin:22,puMax:55,tva:10},
+    {desc:'Enduit de rebouchage / ratissage',qty:1,unit:'m²',puMin:12,puMax:30,tva:10},
+    {desc:'Enduit à la chaux (intérieur)',qty:1,unit:'m²',puMin:30,puMax:75,tva:10},
+    {desc:'Ragréage sol autonivelant',qty:1,unit:'m²',puMin:12,puMax:28,tva:10},
+    {desc:'Faïence murale (pose incluse)',qty:1,unit:'m²',puMin:40,puMax:110,tva:10},
+    {desc:'Grand format mural 120×60 (pose)',qty:1,unit:'m²',puMin:65,puMax:180,tva:10},
+    {desc:'Parement pierre naturelle intérieur',qty:1,unit:'m²',puMin:80,puMax:250,tva:10},
+    {desc:'Briques de verre (cloison)',qty:1,unit:'m²',puMin:250,puMax:550,tva:10},
+    {desc:'Miroir mural sur mesure (posé)',qty:1,unit:'m²',puMin:120,puMax:400,tva:20},
+    {desc:'Isolation phonique (complexe)',qty:1,unit:'m²',puMin:60,puMax:140,tva:5.5},
+    {desc:'Bardage bois intérieur',qty:1,unit:'m²',puMin:45,puMax:110,tva:10},
   ],
   'Électricité': [
-    {desc:'Tableau électrique + disjoncteurs',qty:1,unit:'unité',puMin:800,puMax:1800,tva:10},
-    {desc:'Mise aux normes tableau',qty:1,unit:'forfait',puMin:1500,puMax:3500,tva:10},
-    {desc:'Gaines + câblage complet appartement',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
-    {desc:'Prise 2P+T (fournie + posée)',qty:1,unit:'unité',puMin:30,puMax:65,tva:10},
-    {desc:'Interrupteur va-et-vient',qty:1,unit:'unité',puMin:25,puMax:55,tva:10},
-    {desc:'VMC simple flux',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
-    {desc:'VMC double flux',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
-    {desc:'Radiateur électrique à inertie',qty:1,unit:'unité',puMin:200,puMax:500,tva:10},
-    {desc:'Chauffe-eau électrique 100L',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
-    {desc:'Chauffe-eau électrique 200L',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
-    {desc:'Pompe à chaleur air/air (split)',qty:1,unit:'unité',puMin:1500,puMax:4000,tva:10},
-    {desc:'Pompe à chaleur air/eau',qty:1,unit:'unité',puMin:6000,puMax:14000,tva:10},
-    {desc:'Alarme intrusion (kit)',qty:1,unit:'forfait',puMin:500,puMax:1500,tva:20},
-    {desc:'Détecteurs de fumée (DAAF)',qty:1,unit:'unité',puMin:20,puMax:50,tva:20},
-    {desc:'Borne de recharge VE',qty:1,unit:'unité',puMin:1200,puMax:3000,tva:10},
+    {desc:'Tableau électrique (13 postes)',qty:1,unit:'unité',puMin:900,puMax:2000,tva:10},
+    {desc:'Tableau électrique (26 postes)',qty:1,unit:'unité',puMin:1400,puMax:3000,tva:10},
+    {desc:'Mise aux normes NF C 15-100',qty:1,unit:'forfait',puMin:1800,puMax:4500,tva:10},
+    {desc:'Câblage complet T2 (30–50 m²)',qty:1,unit:'forfait',puMin:2000,puMax:5000,tva:10},
+    {desc:'Câblage complet T4 (80–100 m²)',qty:1,unit:'forfait',puMin:4000,puMax:9000,tva:10},
+    {desc:'Point lumineux complet (fourni+posé)',qty:1,unit:'unité',puMin:70,puMax:180,tva:10},
+    {desc:'Spot encastré LED (fourni+posé)',qty:1,unit:'unité',puMin:60,puMax:150,tva:10},
+    {desc:'Prise 2P+T (fournie + posée)',qty:1,unit:'unité',puMin:35,puMax:70,tva:10},
+    {desc:'Prise USB murale (fournie + posée)',qty:1,unit:'unité',puMin:55,puMax:120,tva:10},
+    {desc:'Interrupteur / va-et-vient',qty:1,unit:'unité',puMin:30,puMax:65,tva:10},
+    {desc:'Interrupteur tactile/variateur',qty:1,unit:'unité',puMin:60,puMax:180,tva:10},
+    {desc:'Prise RJ45 réseau (fournie+posée)',qty:1,unit:'unité',puMin:50,puMax:120,tva:10},
+    {desc:'Câblage fibre optique intérieur',qty:1,unit:'forfait',puMin:200,puMax:500,tva:10},
+    {desc:'VMC simple flux hygroréglable',qty:1,unit:'unité',puMin:500,puMax:1100,tva:10},
+    {desc:'VMC double flux (avec échangeur)',qty:1,unit:'unité',puMin:2000,puMax:5500,tva:10},
+    {desc:'Radiateur à inertie sèche',qty:1,unit:'unité',puMin:250,puMax:650,tva:10},
+    {desc:'Radiateur à inertie fluide',qty:1,unit:'unité',puMin:350,puMax:900,tva:10},
+    {desc:'Chauffe-eau électrique 100L',qty:1,unit:'unité',puMin:500,puMax:1100,tva:10},
+    {desc:'Chauffe-eau électrique 200L',qty:1,unit:'unité',puMin:700,puMax:1600,tva:10},
+    {desc:'Chauffe-eau thermodynamique 200L',qty:1,unit:'unité',puMin:1500,puMax:3500,tva:5.5},
+    {desc:'Pompe à chaleur air/air (bi-split)',qty:1,unit:'unité',puMin:2000,puMax:5500,tva:10},
+    {desc:'Pompe à chaleur air/eau (≤ 12kW)',qty:1,unit:'unité',puMin:7000,puMax:16000,tva:5.5},
+    {desc:'Panneaux photovoltaïques (3kWc)',qty:1,unit:'forfait',puMin:6000,puMax:12000,tva:10},
+    {desc:'Borne de recharge VE (7.4 kW)',qty:1,unit:'unité',puMin:1400,puMax:3500,tva:10},
+    {desc:'Domotique KNX (kit de base)',qty:1,unit:'forfait',puMin:3000,puMax:10000,tva:20},
+    {desc:'Domotique Zigbee/Z-Wave (filaire)',qty:1,unit:'forfait',puMin:800,puMax:3000,tva:20},
+    {desc:'Alarme intrusion + télésurveillance',qty:1,unit:'forfait',puMin:700,puMax:2500,tva:20},
+    {desc:'Visiophone IP (2 fils)',qty:1,unit:'unité',puMin:350,puMax:1000,tva:20},
+    {desc:'Détecteur de fumée DAAF',qty:1,unit:'unité',puMin:25,puMax:60,tva:20},
   ],
   'Plomberie': [
-    {desc:'Salle de bain complète (plomberie)',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
-    {desc:'WC + évacuation',qty:1,unit:'forfait',puMin:500,puMax:1400,tva:10},
-    {desc:'Chauffe-eau 100L',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
-    {desc:'Chauffe-eau 200L',qty:1,unit:'unité',puMin:600,puMax:1400,tva:10},
-    {desc:'Chaudière gaz condensation',qty:1,unit:'unité',puMin:3000,puMax:7000,tva:5.5},
-    {desc:'Radiateurs eau chaude + pose',qty:1,unit:'unité',puMin:300,puMax:700,tva:10},
-    {desc:'Plancher chauffant eau',qty:20,unit:'m²',puMin:60,puMax:130,tva:5.5},
-    {desc:'Adoucisseur eau',qty:1,unit:'unité',puMin:800,puMax:2000,tva:10},
-    {desc:'Ajout compteur eau',qty:1,unit:'unité',puMin:400,puMax:900,tva:10},
-    {desc:'Colonne montante (réfection)',qty:1,unit:'forfait',puMin:1500,puMax:4000,tva:10},
+    {desc:'Réseau distribution eau (appartement)',qty:1,unit:'forfait',puMin:1500,puMax:4500,tva:10},
+    {desc:'Réseau distribution eau (maison)',qty:1,unit:'forfait',puMin:3000,puMax:8000,tva:10},
+    {desc:'Colonne montante (réfection)',qty:1,unit:'forfait',puMin:2000,puMax:6000,tva:10},
+    {desc:'Adoucisseur d\'eau',qty:1,unit:'unité',puMin:900,puMax:2500,tva:10},
+    {desc:'Chauffe-eau 100L (fourni+posé)',qty:1,unit:'unité',puMin:500,puMax:1200,tva:10},
+    {desc:'Chauffe-eau 200L (fourni+posé)',qty:1,unit:'unité',puMin:750,puMax:1700,tva:10},
+    {desc:'Chauffe-eau instantané gaz',qty:1,unit:'unité',puMin:800,puMax:2200,tva:5.5},
+    {desc:'Chaudière gaz condensation',qty:1,unit:'unité',puMin:3500,puMax:7500,tva:5.5},
+    {desc:'Chaudière fioul condensation',qty:1,unit:'unité',puMin:4000,puMax:9000,tva:5.5},
+    {desc:'Chaudière bois/granulés',qty:1,unit:'unité',puMin:8000,puMax:18000,tva:5.5},
+    {desc:'Poêle à bois (fourni + raccordé)',qty:1,unit:'unité',puMin:1500,puMax:5000,tva:10},
+    {desc:'Poêle à granulés (fourni + raccordé)',qty:1,unit:'unité',puMin:2500,puMax:7000,tva:10},
+    {desc:'Insert cheminée à bois',qty:1,unit:'unité',puMin:2000,puMax:6000,tva:10},
+    {desc:'Radiateur eau chaude acier (fourni+posé)',qty:1,unit:'unité',puMin:350,puMax:800,tva:10},
+    {desc:'Radiateur fonte décoratif',qty:1,unit:'unité',puMin:500,puMax:1800,tva:10},
+    {desc:'Radiateur design acier/inox',qty:1,unit:'unité',puMin:600,puMax:2200,tva:10},
+    {desc:'Plancher chauffant hydraulique',qty:1,unit:'m²',puMin:65,puMax:145,tva:5.5},
+    {desc:'Plancher chauffant électrique',qty:1,unit:'m²',puMin:40,puMax:90,tva:10},
+    {desc:'WC + évacuation (branchement)',qty:1,unit:'forfait',puMin:600,puMax:1600,tva:10},
+    {desc:'Robinetterie cuisine (mitigeur)',qty:1,unit:'unité',puMin:150,puMax:500,tva:10},
+    {desc:'Robinetterie salle de bain',qty:1,unit:'unité',puMin:200,puMax:700,tva:10},
+    {desc:'Mitigeur thermostatique douche',qty:1,unit:'unité',puMin:300,puMax:1000,tva:10},
+    {desc:'Robinet mural (pose encastrée)',qty:1,unit:'unité',puMin:350,puMax:1200,tva:10},
+    {desc:'Évacuation douche italienne (siphon)',qty:1,unit:'unité',puMin:120,puMax:350,tva:10},
+    {desc:'Thermostat connecté (Netatmo/Nest)',qty:1,unit:'unité',puMin:180,puMax:400,tva:10},
+  ],
+  'Chauffage / VMC': [
+    {desc:'Climatisation réversible mono-split',qty:1,unit:'unité',puMin:1500,puMax:4500,tva:10},
+    {desc:'Climatisation réversible bi-split',qty:1,unit:'unité',puMin:2800,puMax:7000,tva:10},
+    {desc:'Climatisation réversible tri-split',qty:1,unit:'unité',puMin:4000,puMax:10000,tva:10},
+    {desc:'PAC géothermique (sol/sol)',qty:1,unit:'forfait',puMin:12000,puMax:28000,tva:5.5},
+    {desc:'Entretien chaudière gaz (annuel)',qty:1,unit:'forfait',puMin:120,puMax:280,tva:10},
+    {desc:'Remplacement corps de chauffe',qty:1,unit:'unité',puMin:400,puMax:1200,tva:10},
+    {desc:'Robinet thermostatique (fourni+posé)',qty:1,unit:'unité',puMin:50,puMax:130,tva:10},
+    {desc:'Conduit de fumée (tubage)',qty:1,unit:'ml',puMin:80,puMax:200,tva:10},
+    {desc:'Hotte aspirante (recyclage)',qty:1,unit:'unité',puMin:200,puMax:600,tva:20},
+    {desc:'Hotte aspirante (évacuation extérieure)',qty:1,unit:'unité',puMin:350,puMax:1200,tva:20},
   ],
   'Cuisine': [
-    {desc:'Meubles bas 60cm',qty:4,unit:'unité',puMin:200,puMax:450,tva:20},
-    {desc:'Meubles hauts 60cm',qty:3,unit:'unité',puMin:150,puMax:350,tva:20},
-    {desc:'Colonne four / réfrigérateur',qty:1,unit:'unité',puMin:300,puMax:700,tva:20},
-    {desc:'Plan de travail stratifié',qty:3,unit:'ml',puMin:60,puMax:200,tva:20},
-    {desc:'Plan de travail pierre/quartz',qty:3,unit:'ml',puMin:200,puMax:700,tva:20},
-    {desc:'Évier inox 1 bac + robinetterie',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
-    {desc:'Crédence carrelage',qty:4,unit:'m²',puMin:50,puMax:130,tva:10},
-    {desc:'Crédence verre laqué',qty:1,unit:'m²',puMin:80,puMax:200,tva:20},
-    {desc:'Four encastrable',qty:1,unit:'unité',puMin:250,puMax:800,tva:20},
-    {desc:'Plaque de cuisson vitrocéramique',qty:1,unit:'unité',puMin:200,puMax:600,tva:20},
-    {desc:'Plaque induction',qty:1,unit:'unité',puMin:300,puMax:900,tva:20},
-    {desc:'Hotte aspirante',qty:1,unit:'unité',puMin:150,puMax:500,tva:20},
-    {desc:'Lave-vaisselle encastrable',qty:1,unit:'unité',puMin:350,puMax:900,tva:20},
-    {desc:'Réfrigérateur encastrable',qty:1,unit:'unité',puMin:400,puMax:1200,tva:20},
-    {desc:'Pose cuisine (main d\'oeuvre)',qty:1,unit:'forfait',puMin:800,puMax:2000,tva:10},
+    {desc:'Cuisine complète (pose seule MO)',qty:1,unit:'forfait',puMin:900,puMax:2500,tva:10},
+    {desc:'Meuble bas 60 cm',qty:1,unit:'unité',puMin:180,puMax:500,tva:20},
+    {desc:'Meuble haut 60 cm',qty:1,unit:'unité',puMin:130,puMax:380,tva:20},
+    {desc:'Colonne four/four+micro-ondes',qty:1,unit:'unité',puMin:350,puMax:900,tva:20},
+    {desc:'Colonne réfrigérateur encastrable',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
+    {desc:'Îlot central (meublé)',qty:1,unit:'unité',puMin:800,puMax:4000,tva:20},
+    {desc:'Plan de travail stratifié (fourni+posé)',qty:1,unit:'ml',puMin:70,puMax:220,tva:20},
+    {desc:'Plan de travail bois massif (fourni+posé)',qty:1,unit:'ml',puMin:180,puMax:550,tva:20},
+    {desc:'Plan de travail quartz (fourni+posé)',qty:1,unit:'m²',puMin:400,puMax:1200,tva:20},
+    {desc:'Plan de travail granit (fourni+posé)',qty:1,unit:'m²',puMin:350,puMax:1000,tva:20},
+    {desc:'Plan de travail Dekton/céramique',qty:1,unit:'m²',puMin:500,puMax:1600,tva:20},
+    {desc:'Plan de travail béton ciré',qty:1,unit:'m²',puMin:250,puMax:700,tva:20},
+    {desc:'Évier inox 1 bac + robinetterie',qty:1,unit:'unité',puMin:280,puMax:650,tva:10},
+    {desc:'Évier sous-plan ou à encastrer',qty:1,unit:'unité',puMin:350,puMax:1000,tva:10},
+    {desc:'Évier grès / céramique',qty:1,unit:'unité',puMin:400,puMax:1500,tva:10},
+    {desc:'Crédence carrelage (fournie+posée)',qty:1,unit:'m²',puMin:55,puMax:150,tva:10},
+    {desc:'Crédence verre laqué (fournie+posée)',qty:1,unit:'m²',puMin:120,puMax:350,tva:20},
+    {desc:'Crédence inox / alu brossé',qty:1,unit:'m²',puMin:150,puMax:400,tva:20},
+    {desc:'Crédence Dekton / céramique',qty:1,unit:'m²',puMin:200,puMax:600,tva:20},
+    {desc:'Four encastrable',qty:1,unit:'unité',puMin:280,puMax:1000,tva:20},
+    {desc:'Four combiné vapeur/pyrolyse',qty:1,unit:'unité',puMin:500,puMax:2200,tva:20},
+    {desc:'Plaque vitrocéramique',qty:1,unit:'unité',puMin:220,puMax:650,tva:20},
+    {desc:'Plaque induction',qty:1,unit:'unité',puMin:320,puMax:1100,tva:20},
+    {desc:'Plaque gaz encastrable',qty:1,unit:'unité',puMin:350,puMax:1200,tva:20},
+    {desc:'Hotte aspirante (décorative)',qty:1,unit:'unité',puMin:200,puMax:800,tva:20},
+    {desc:'Hotte plafonnière',qty:1,unit:'unité',puMin:400,puMax:1500,tva:20},
+    {desc:'Lave-vaisselle encastrable',qty:1,unit:'unité',puMin:380,puMax:1100,tva:20},
+    {desc:'Réfrigérateur encastrable',qty:1,unit:'unité',puMin:450,puMax:1400,tva:20},
+    {desc:'Congélateur encastrable',qty:1,unit:'unité',puMin:350,puMax:1000,tva:20},
+    {desc:'Micro-ondes encastrable',qty:1,unit:'unité',puMin:200,puMax:700,tva:20},
+    {desc:'Cave à vin encastrable',qty:1,unit:'unité',puMin:350,puMax:1500,tva:20},
   ],
   'Salle de bain': [
-    {desc:'Receveur douche extra-plat',qty:1,unit:'unité',puMin:200,puMax:700,tva:10},
-    {desc:'Bac douche à l\'italienne',qty:1,unit:'forfait',puMin:600,puMax:1800,tva:10},
-    {desc:'Paroi douche verre',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
-    {desc:'Cabine douche intégrale',qty:1,unit:'unité',puMin:600,puMax:2000,tva:20},
-    {desc:'Baignoire encastrée',qty:1,unit:'unité',puMin:500,puMax:2000,tva:10},
-    {desc:'Meuble vasque 60cm + miroir',qty:1,unit:'forfait',puMin:400,puMax:1200,tva:20},
-    {desc:'Vasque à poser + robinetterie',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
-    {desc:'WC classique + réservoir',qty:1,unit:'unité',puMin:200,puMax:500,tva:10},
-    {desc:'WC suspendu + bâti-support',qty:1,unit:'unité',puMin:400,puMax:1000,tva:10},
-    {desc:'Carrelage mural faïence',qty:1,unit:'m²',puMin:35,puMax:100,tva:10},
-    {desc:'Carrelage sol antidérapant',qty:1,unit:'m²',puMin:40,puMax:110,tva:10},
-    {desc:'Sèche-serviettes électrique',qty:1,unit:'unité',puMin:150,puMax:450,tva:10},
-    {desc:'Plomberie salle de bain (MO)',qty:1,unit:'forfait',puMin:1200,puMax:3000,tva:10},
+    {desc:'Douche italienne complète (maçonnerie)',qty:1,unit:'forfait',puMin:900,puMax:2800,tva:10},
+    {desc:'Receveur extra-plat (standard)',qty:1,unit:'unité',puMin:220,puMax:750,tva:10},
+    {desc:'Receveur marbre/résine (luxe)',qty:1,unit:'unité',puMin:500,puMax:2500,tva:10},
+    {desc:'Paroi douche verre transparent (120cm)',qty:1,unit:'unité',puMin:350,puMax:1100,tva:20},
+    {desc:'Paroi douche verre sablé (design)',qty:1,unit:'unité',puMin:450,puMax:1500,tva:20},
+    {desc:'Cabine douche intégrale',qty:1,unit:'unité',puMin:700,puMax:2500,tva:20},
+    {desc:'Baignoire encastrée (standard)',qty:1,unit:'unité',puMin:600,puMax:2200,tva:10},
+    {desc:'Baignoire îlot',qty:1,unit:'unité',puMin:1000,puMax:5000,tva:10},
+    {desc:'Baignoire balnéo / hydromassage',qty:1,unit:'unité',puMin:2000,puMax:8000,tva:10},
+    {desc:'Hammam vapeur (cabine)',qty:1,unit:'forfait',puMin:4000,puMax:14000,tva:20},
+    {desc:'Meuble vasque suspendu 60cm + miroir',qty:1,unit:'forfait',puMin:450,puMax:1400,tva:20},
+    {desc:'Meuble vasque double 80cm suspendu',qty:1,unit:'forfait',puMin:700,puMax:2200,tva:20},
+    {desc:'Meuble vasque double 120cm',qty:1,unit:'forfait',puMin:900,puMax:3000,tva:20},
+    {desc:'Vasque à poser (design)',qty:1,unit:'unité',puMin:200,puMax:900,tva:20},
+    {desc:'Vasque encastrée céramique',qty:1,unit:'unité',puMin:150,puMax:500,tva:20},
+    {desc:'Robinetterie lavabo (mitigeur)',qty:1,unit:'unité',puMin:120,puMax:500,tva:10},
+    {desc:'Mitigeur bec haut design',qty:1,unit:'unité',puMin:200,puMax:800,tva:10},
+    {desc:'WC classique + réservoir (fourni+posé)',qty:1,unit:'unité',puMin:250,puMax:600,tva:10},
+    {desc:'WC suspendu + bâti-support',qty:1,unit:'unité',puMin:500,puMax:1300,tva:10},
+    {desc:'WC japonais (lavant)',qty:1,unit:'unité',puMin:700,puMax:2500,tva:10},
+    {desc:'Faïence murale (carrelage standard)',qty:1,unit:'m²',puMin:40,puMax:120,tva:10},
+    {desc:'Grand format mural 120×60',qty:1,unit:'m²',puMin:70,puMax:200,tva:10},
+    {desc:'Carrelage hexagonal mural',qty:1,unit:'m²',puMin:55,puMax:160,tva:10},
+    {desc:'Marbre / pierre naturelle mural',qty:1,unit:'m²',puMin:120,puMax:350,tva:10},
+    {desc:'Carrelage sol antidérapant',qty:1,unit:'m²',puMin:45,puMax:130,tva:10},
+    {desc:'Carrelage sol imitation bois',qty:1,unit:'m²',puMin:55,puMax:150,tva:10},
+    {desc:'Miroir avec éclairage LED',qty:1,unit:'unité',puMin:250,puMax:1000,tva:20},
+    {desc:'Niche murale carrelée',qty:1,unit:'unité',puMin:150,puMax:450,tva:10},
+    {desc:'Sèche-serviettes électrique',qty:1,unit:'unité',puMin:180,puMax:550,tva:10},
+    {desc:'Sèche-serviettes eau chaude',qty:1,unit:'unité',puMin:350,puMax:1200,tva:10},
+    {desc:'Ventilation hygro B',qty:1,unit:'unité',puMin:150,puMax:400,tva:10},
+    {desc:'Tablier de baignoire carrelé',qty:1,unit:'forfait',puMin:300,puMax:900,tva:10},
+    {desc:'Plomberie salle de bain (MO seule)',qty:1,unit:'forfait',puMin:1400,puMax:3500,tva:10},
   ],
   'Sols': [
-    {desc:'Parquet stratifié 8mm (pose incluse)',qty:1,unit:'m²',puMin:20,puMax:55,tva:10},
-    {desc:'Parquet contrecollé (pose incluse)',qty:1,unit:'m²',puMin:50,puMax:120,tva:10},
-    {desc:'Parquet massif (pose incluse)',qty:1,unit:'m²',puMin:80,puMax:180,tva:10},
-    {desc:'Carrelage 30×30 (pose incluse)',qty:1,unit:'m²',puMin:35,puMax:80,tva:10},
-    {desc:'Carrelage 60×60 (pose incluse)',qty:1,unit:'m²',puMin:45,puMax:110,tva:10},
-    {desc:'Carrelage grand format 80×80',qty:1,unit:'m²',puMin:70,puMax:160,tva:10},
-    {desc:'Sol vinyle clipsable LVT',qty:1,unit:'m²',puMin:18,puMax:50,tva:10},
-    {desc:'Sous-couche acoustique',qty:1,unit:'m²',puMin:3,puMax:8,tva:10},
-    {desc:'Dépose anciens sols',qty:1,unit:'m²',puMin:8,puMax:20,tva:10},
-    {desc:'Ragréage + nivellement',qty:1,unit:'m²',puMin:10,puMax:25,tva:10},
-    {desc:'Plinthes MDF (fournie + posée)',qty:1,unit:'ml',puMin:5,puMax:18,tva:20},
-    {desc:'Seuil de passage',qty:1,unit:'unité',puMin:20,puMax:60,tva:20},
+    {desc:'Parquet stratifié 8mm AC3 (fourni+posé)',qty:1,unit:'m²',puMin:22,puMax:55,tva:10},
+    {desc:'Parquet stratifié 12mm AC4 (fourni+posé)',qty:1,unit:'m²',puMin:30,puMax:70,tva:10},
+    {desc:'Parquet contre-collé chêne (fourni+posé)',qty:1,unit:'m²',puMin:60,puMax:145,tva:10},
+    {desc:'Parquet massif chêne (fourni+posé)',qty:1,unit:'m²',puMin:90,puMax:220,tva:10},
+    {desc:'Parquet massif exotique (fourni+posé)',qty:1,unit:'m²',puMin:110,puMax:280,tva:10},
+    {desc:'Sol vinyle clipsable LVT (fourni+posé)',qty:1,unit:'m²',puMin:20,puMax:55,tva:10},
+    {desc:'Sol vinyle collé PVC',qty:1,unit:'m²',puMin:15,puMax:40,tva:10},
+    {desc:'Lame PVC rigide SPC (fourni+posé)',qty:1,unit:'m²',puMin:25,puMax:60,tva:10},
+    {desc:'Moquette (fournie + posée)',qty:1,unit:'m²',puMin:18,puMax:55,tva:10},
+    {desc:'Carrelage grès cérame 30×30',qty:1,unit:'m²',puMin:38,puMax:90,tva:10},
+    {desc:'Carrelage grès cérame 60×60',qty:1,unit:'m²',puMin:50,puMax:120,tva:10},
+    {desc:'Carrelage grand format 80×80',qty:1,unit:'m²',puMin:75,puMax:180,tva:10},
+    {desc:'Carrelage grand format 120×60',qty:1,unit:'m²',puMin:90,puMax:220,tva:10},
+    {desc:'Carrelage imitation parquet',qty:1,unit:'m²',puMin:50,puMax:135,tva:10},
+    {desc:'Carrelage imitation marbre',qty:1,unit:'m²',puMin:65,puMax:200,tva:10},
+    {desc:'Carrelage hexagonal (metro)',qty:1,unit:'m²',puMin:55,puMax:160,tva:10},
+    {desc:'Carrelage antidérapant extérieur R11',qty:1,unit:'m²',puMin:45,puMax:130,tva:10},
+    {desc:'Tomettes anciennes (fourni+posé)',qty:1,unit:'m²',puMin:75,puMax:200,tva:10},
+    {desc:'Pierre naturelle (travertin/calcaire)',qty:1,unit:'m²',puMin:100,puMax:300,tva:10},
+    {desc:'Marbre (fourni + posé)',qty:1,unit:'m²',puMin:180,puMax:550,tva:10},
+    {desc:'Carrelage quartz reconstitué',qty:1,unit:'m²',puMin:200,puMax:600,tva:10},
+    {desc:'Béton ciré sol (fourni + posé)',qty:1,unit:'m²',puMin:90,puMax:230,tva:10},
+    {desc:'Résine époxy sol (fourni + posé)',qty:1,unit:'m²',puMin:50,puMax:140,tva:10},
+    {desc:'Sol béton poli (polished concrete)',qty:1,unit:'m²',puMin:80,puMax:200,tva:10},
+    {desc:'Lame terrasse composite',qty:1,unit:'m²',puMin:35,puMax:90,tva:10},
+    {desc:'Lame terrasse bois exotique (IPE/Teck)',qty:1,unit:'m²',puMin:55,puMax:150,tva:10},
+    {desc:'Lame terrasse bois pin traité',qty:1,unit:'m²',puMin:30,puMax:75,tva:10},
+    {desc:'Sous-couche acoustique',qty:1,unit:'m²',puMin:4,puMax:10,tva:10},
+    {desc:'Dépose anciens revêtements',qty:1,unit:'m²',puMin:8,puMax:22,tva:10},
+    {desc:'Dépose carrelage (démolition)',qty:1,unit:'m²',puMin:12,puMax:30,tva:10},
+    {desc:'Ragréage + nivellement',qty:1,unit:'m²',puMin:12,puMax:28,tva:10},
+    {desc:'Chape liquide autonivelante',qty:1,unit:'m²',puMin:18,puMax:40,tva:10},
+    {desc:'Plinthe MDF (fournie + posée)',qty:1,unit:'ml',puMin:7,puMax:20,tva:20},
+    {desc:'Plinthe carrelage assortie',qty:1,unit:'ml',puMin:12,puMax:35,tva:10},
+    {desc:'Seuil de passage',qty:1,unit:'unité',puMin:25,puMax:70,tva:20},
+    {desc:'Joints époxy (finition)',qty:1,unit:'m²',puMin:5,puMax:15,tva:10},
   ],
   'Peinture': [
-    {desc:'Enduit de lissage murs',qty:1,unit:'m²',puMin:8,puMax:20,tva:10},
-    {desc:'Peinture murs 2 couches',qty:1,unit:'m²',puMin:8,puMax:18,tva:10},
-    {desc:'Peinture plafonds 2 couches',qty:1,unit:'m²',puMin:10,puMax:22,tva:10},
-    {desc:'Peinture façade extérieure',qty:1,unit:'m²',puMin:15,puMax:40,tva:10},
-    {desc:'Reprise boiseries / baguettes',qty:1,unit:'forfait',puMin:300,puMax:800,tva:10},
-    {desc:'Papier peint (pose + fourniture)',qty:1,unit:'m²',puMin:20,puMax:55,tva:20},
-    {desc:'Béton ciré murs / sol',qty:1,unit:'m²',puMin:60,puMax:150,tva:10},
+    {desc:'Enduit de lissage (sablé/lissé)',qty:1,unit:'m²',puMin:10,puMax:25,tva:10},
+    {desc:'Enduit projeté plafond',qty:1,unit:'m²',puMin:12,puMax:30,tva:10},
+    {desc:'Peinture murs 2 couches (standard)',qty:1,unit:'m²',puMin:8,puMax:20,tva:10},
+    {desc:'Peinture murs lessivable (premium)',qty:1,unit:'m²',puMin:12,puMax:28,tva:10},
+    {desc:'Peinture plafonds 2 couches',qty:1,unit:'m²',puMin:10,puMax:24,tva:10},
+    {desc:'Peinture façade extérieure',qty:1,unit:'m²',puMin:18,puMax:50,tva:10},
+    {desc:'Badigeon chaux naturelle',qty:1,unit:'m²',puMin:18,puMax:45,tva:10},
+    {desc:'Stuc vénitien (décoratif)',qty:1,unit:'m²',puMin:60,puMax:180,tva:10},
+    {desc:'Béton ciré murs (fourni+posé)',qty:1,unit:'m²',puMin:70,puMax:170,tva:10},
+    {desc:'Béton ciré sol (fourni+posé)',qty:1,unit:'m²',puMin:80,puMax:200,tva:10},
+    {desc:'Papier peint (fourni + pose)',qty:1,unit:'m²',puMin:22,puMax:65,tva:20},
+    {desc:'Papier peint panoramique (décor)',qty:1,unit:'unité',puMin:300,puMax:1500,tva:20},
+    {desc:'Patine / peinture décorative',qty:1,unit:'m²',puMin:28,puMax:80,tva:10},
+    {desc:'Peinture antimoisissure',qty:1,unit:'m²',puMin:12,puMax:30,tva:10},
+    {desc:'Peinture tableau ardoise (mural)',qty:1,unit:'m²',puMin:20,puMax:55,tva:10},
+    {desc:'Peinture sol époxy',qty:1,unit:'m²',puMin:35,puMax:90,tva:10},
+    {desc:'Peinture boiseries / menuiseries int.',qty:1,unit:'unité',puMin:80,puMax:250,tva:10},
+    {desc:'Peinture boiseries (façade / extérieur)',qty:1,unit:'unité',puMin:120,puMax:380,tva:10},
+    {desc:'Crépi / enduit taloché extérieur',qty:1,unit:'m²',puMin:30,puMax:75,tva:10},
   ],
   'Ameublement': [
-    {desc:'Canapé 3 places / convertible',qty:1,unit:'unité',puMin:500,puMax:2000,tva:20},
-    {desc:'Table à manger',qty:1,unit:'unité',puMin:200,puMax:800,tva:20},
-    {desc:'Chaises (lot de 4)',qty:1,unit:'forfait',puMin:150,puMax:600,tva:20},
-    {desc:'Lit 140 + matelas + sommier',qty:1,unit:'forfait',puMin:500,puMax:1500,tva:20},
-    {desc:'Lit 160 + matelas + sommier',qty:1,unit:'forfait',puMin:700,puMax:2000,tva:20},
-    {desc:'Armoire 2 portes coulissantes',qty:1,unit:'unité',puMin:400,puMax:1200,tva:20},
-    {desc:'Commode / rangement',qty:1,unit:'unité',puMin:150,puMax:500,tva:20},
-    {desc:'Bureau + chaise',qty:1,unit:'forfait',puMin:200,puMax:700,tva:20},
-    {desc:'Réfrigérateur',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
-    {desc:'Lave-linge',qty:1,unit:'unité',puMin:350,puMax:900,tva:20},
-    {desc:'Sèche-linge',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
-    {desc:'Lave-vaisselle',qty:1,unit:'unité',puMin:300,puMax:800,tva:20},
-    {desc:'Micro-ondes',qty:1,unit:'unité',puMin:80,puMax:250,tva:20},
-    {desc:'Télévision',qty:1,unit:'unité',puMin:300,puMax:1000,tva:20},
-    {desc:'Luminaires (lot)',qty:1,unit:'forfait',puMin:200,puMax:700,tva:20},
-    {desc:'Literie (draps, couettes, oreillers)',qty:1,unit:'forfait',puMin:200,puMax:500,tva:20},
-    {desc:'Rideaux / stores',qty:1,unit:'forfait',puMin:150,puMax:500,tva:20},
-    {desc:'Vaisselle / ustensiles cuisine',qty:1,unit:'forfait',puMin:100,puMax:300,tva:20},
+    {desc:'Canapé 3 places',qty:1,unit:'unité',puMin:600,puMax:2500,tva:20},
+    {desc:'Canapé convertible 3 places',qty:1,unit:'unité',puMin:700,puMax:3000,tva:20},
+    {desc:'Canapé d\'angle',qty:1,unit:'unité',puMin:900,puMax:4000,tva:20},
+    {desc:'Table à manger (4–6 places)',qty:1,unit:'unité',puMin:250,puMax:1200,tva:20},
+    {desc:'Chaises (lot de 4)',qty:1,unit:'forfait',puMin:200,puMax:800,tva:20},
+    {desc:'Chaises de bar / tabourets (×2)',qty:1,unit:'forfait',puMin:120,puMax:450,tva:20},
+    {desc:'Lit simple 90 + matelas + sommier',qty:1,unit:'forfait',puMin:350,puMax:1200,tva:20},
+    {desc:'Lit double 140 + matelas + sommier',qty:1,unit:'forfait',puMin:550,puMax:1800,tva:20},
+    {desc:'Lit double 160 + matelas + sommier',qty:1,unit:'forfait',puMin:700,puMax:2200,tva:20},
+    {desc:'Lit queen 180 + matelas + sommier',qty:1,unit:'forfait',puMin:900,puMax:3500,tva:20},
+    {desc:'Armoire 2 portes coulissantes',qty:1,unit:'unité',puMin:450,puMax:1400,tva:20},
+    {desc:'Dressing (kit Ikea / assemblé)',qty:1,unit:'unité',puMin:600,puMax:2000,tva:20},
+    {desc:'Commode / rangement',qty:1,unit:'unité',puMin:180,puMax:600,tva:20},
+    {desc:'Table de chevet (×2)',qty:1,unit:'forfait',puMin:100,puMax:400,tva:20},
+    {desc:'Bureau + chaise bureau',qty:1,unit:'forfait',puMin:250,puMax:900,tva:20},
+    {desc:'Étagère / bibliothèque',qty:1,unit:'unité',puMin:120,puMax:600,tva:20},
+    {desc:'Table basse de salon',qty:1,unit:'unité',puMin:120,puMax:600,tva:20},
+    {desc:'Meuble TV / buffet salon',qty:1,unit:'unité',puMin:200,puMax:900,tva:20},
+    {desc:'Réfrigérateur (A++)',qty:1,unit:'unité',puMin:350,puMax:1200,tva:20},
+    {desc:'Réfrigérateur américain',qty:1,unit:'unité',puMin:700,puMax:2500,tva:20},
+    {desc:'Lave-linge 7kg',qty:1,unit:'unité',puMin:400,puMax:1100,tva:20},
+    {desc:'Lave-linge 10kg (haut débit)',qty:1,unit:'unité',puMin:600,puMax:1600,tva:20},
+    {desc:'Sèche-linge condensation',qty:1,unit:'unité',puMin:380,puMax:1000,tva:20},
+    {desc:'Lave-vaisselle',qty:1,unit:'unité',puMin:350,puMax:1100,tva:20},
+    {desc:'Micro-ondes encastrable',qty:1,unit:'unité',puMin:100,puMax:400,tva:20},
+    {desc:'Télévision (50–55 pouces)',qty:1,unit:'unité',puMin:380,puMax:1400,tva:20},
+    {desc:'Luminaires (lot salon + chambres)',qty:1,unit:'forfait',puMin:250,puMax:900,tva:20},
+    {desc:'Miroir décoratif',qty:1,unit:'unité',puMin:80,puMax:400,tva:20},
+    {desc:'Literie complète (draps/couettes/oreillers)',qty:1,unit:'forfait',puMin:250,puMax:700,tva:20},
+    {desc:'Rideaux / stores (lot)',qty:1,unit:'forfait',puMin:200,puMax:700,tva:20},
+    {desc:'Tapis (salon)',qty:1,unit:'unité',puMin:100,puMax:500,tva:20},
+    {desc:'Vaisselle + ustensiles cuisine (lot)',qty:1,unit:'forfait',puMin:150,puMax:450,tva:20},
+    {desc:'Matériel cuisine (casseroles, etc.)',qty:1,unit:'forfait',puMin:100,puMax:350,tva:20},
   ]
 };
 
@@ -1033,6 +1220,259 @@ async function geocodeAdresse(addr) {
 }
 
 // ══════════ ÉTUDE DE MARCHÉ ══════════
+// ══════════ DONNÉES SOCIO-DÉMOGRAPHIQUES ══════════
+const DEMO_DEPT = {
+  // Format: chom (%), age, trend, migration, biens {app, mais, terrain, autre}
+  '75':{ chom:8.5,  age:'25 – 39 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Forte mobilité interne : étudiants, jeunes cadres français et expatriés internationaux. Peu de départs vers province avant 35–40 ans.',
+    biens:{app:78, mais:5, terrain:1, autre:16}, biensLabel:'Appartement très majoritaire' },
+  '92':{ chom:7.2,  age:'30 – 44 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Cadres supérieurs, profils financiers/tech. Attire des actifs à haut revenu, peu de primo-accédants.',
+    biens:{app:70, mais:22, terrain:2, autre:6}, biensLabel:'Appartement dominant' },
+  '93':{ chom:14.8, age:'20 – 39 ans', trend:'croissance',     color:'#ef476f',
+    migration:'Forte immigration internationale (Maghreb, Afrique sub-saharienne). Gentrification progressive (Montreuil, Saint-Denis). Primo-accédants attirés par les prix.',
+    biens:{app:74, mais:16, terrain:2, autre:8}, biensLabel:'Appartement dominant' },
+  '94':{ chom:8.8,  age:'30 – 44 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Mobilité locale francilienne. Familles cherchant davantage d\'espace tout en restant proches de Paris.',
+    biens:{app:62, mais:30, terrain:3, autre:5}, biensLabel:'Mix appartement / maison' },
+  '77':{ chom:8.1,  age:'30 – 49 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Familles fuyant Paris et PC pour plus d\'espace. Fort exode urbain post-Covid. Parisiens et habitants du Val-de-Marne.',
+    biens:{app:34, mais:55, terrain:7, autre:4}, biensLabel:'Maison très recherchée' },
+  '78':{ chom:6.9,  age:'35 – 54 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Cadres supérieurs de la tech et ingénierie (Saint-Quentin-en-Yvelines). Familles aisées cherchant calme + accès Paris.',
+    biens:{app:40, mais:50, terrain:5, autre:5}, biensLabel:'Maison légèrement favorite' },
+  '91':{ chom:7.5,  age:'30 – 49 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Familles et cadres, attirés par les prix plus accessibles vs Paris. Profil ingénieurs (Saclay, CEA).',
+    biens:{app:42, mais:48, terrain:6, autre:4}, biensLabel:'Mix équilibré' },
+  '95':{ chom:9.2,  age:'30 – 44 ans', trend:'stable',         color:'#ffd166',
+    migration:'Familles cherchant prix accessibles + mobilité francilienne. Bassin d\'emploi Roissy (aéroport) important.',
+    biens:{app:42, mais:48, terrain:5, autre:5}, biensLabel:'Mix appartement / maison' },
+  '69':{ chom:7.2,  age:'25 – 39 ans', trend:'croissance forte',color:'#00d4aa',
+    migration:'Forte attractivité nationale. Jeunes actifs de toute la France, étudiants, cadres des secteurs tech, santé, industrie. Migration positive.',
+    biens:{app:62, mais:28, terrain:5, autre:5}, biensLabel:'Appartement majoritaire' },
+  '13':{ chom:12.8, age:'25 – 44 ans', trend:'stable',         color:'#ef476f',
+    migration:'Immigration méditerranéenne historique. Parisiens attirés par Aix et bord de mer. Fort contraste Aix (aisé) / Marseille (populaire).',
+    biens:{app:55, mais:32, terrain:7, autre:6}, biensLabel:'Appartement dominant' },
+  '06':{ chom:9.1,  age:'50 – 64 ans', trend:'légère hausse',  color:'#ffd166',
+    migration:'Retraités parisiens et nordistes, étrangers européens (Anglais, Italiens, Belges). Sophia Antipolis attire cadres internationaux (rajeunit localement).',
+    biens:{app:65, mais:28, terrain:4, autre:3}, biensLabel:'Appartement dominant' },
+  '83':{ chom:9.7,  age:'45 – 64 ans', trend:'croissance',     color:'#ffd166',
+    migration:'Retraités du Nord, de Paris et de l\'Est. Résidences secondaires très actives (parisiens, lyonnais). Littoral : forte pression sur le marché.',
+    biens:{app:38, mais:50, terrain:8, autre:4}, biensLabel:'Maison favorite' },
+  '04':{ chom:9.2,  age:'45 – 59 ans', trend:'stable',         color:'#ffd166',
+    migration:'Parisiens en quête de nature et de qualité de vie. Retraités actifs. Forte proportion de néo-ruraux depuis 2020 (télétravail).',
+    biens:{app:22, mais:58, terrain:16, autre:4}, biensLabel:'Maison très recherchée' },
+  '05':{ chom:8.5,  age:'40 – 54 ans', trend:'stable',         color:'#ffd166',
+    migration:'Amoureux de nature, randonneurs, snowbirds. Retraités actifs. Peu de migration internationale.',
+    biens:{app:20, mais:55, terrain:20, autre:5}, biensLabel:'Maison & terrain très recherchés' },
+  '34':{ chom:10.5, age:'25 – 44 ans', trend:'croissance forte',color:'#ffd166',
+    migration:'Parisiens, Lyonnais et Bordelais cherchant mer + dynamisme. Département le plus attractif de France en flux nets. Montpellier très prisé des jeunes.',
+    biens:{app:58, mais:32, terrain:6, autre:4}, biensLabel:'Appartement favori' },
+  '30':{ chom:11.2, age:'30 – 44 ans', trend:'légère hausse',  color:'#ffd166',
+    migration:'Parisiens et régionaux attirés par Nîmes et la proximité Côte. Camargue attire retraités et artistes.',
+    biens:{app:42, mais:46, terrain:8, autre:4}, biensLabel:'Mix équilibré' },
+  '66':{ chom:12.1, age:'50 – 64 ans', trend:'légère hausse',  color:'#ffd166',
+    migration:'Retraités (Nord, Paris, Île-de-France). Résidences secondaires nombreuses. Perpignan attire primo-accédants budget limité.',
+    biens:{app:45, mais:42, terrain:9, autre:4}, biensLabel:'Mix appartement / maison' },
+  '11':{ chom:11.8, age:'50 – 64 ans', trend:'stable',         color:'#ffd166',
+    migration:'Retraités nordistes et parisiens. Profil rural marqué hors Carcassonne/Narbonne.',
+    biens:{app:32, mais:50, terrain:14, autre:4}, biensLabel:'Maison favorite' },
+  '31':{ chom:7.8,  age:'20 – 34 ans', trend:'croissance forte',color:'#00d4aa',
+    migration:'Étudiants de toute la France (2e ville universitaire). Jeunes actifs aéronautique/spatial (Airbus). Solde migratoire très positif.',
+    biens:{app:62, mais:28, terrain:5, autre:5}, biensLabel:'Appartement dominant' },
+  '64':{ chom:8.3,  age:'35 – 49 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Parisiens attirés par la qualité de vie (surf, montagne, gastronomie). Basques natifs très attachés au territoire. Fort sentiment identitaire.',
+    biens:{app:35, mais:52, terrain:9, autre:4}, biensLabel:'Maison favorite' },
+  '40':{ chom:9.1,  age:'45 – 59 ans', trend:'croissance',     color:'#ffd166',
+    migration:'Landais natifs + parisiens post-Covid cherchant surf et pins. Retraités actifs. Bordeaux-Métropole déborde sur nord du département.',
+    biens:{app:28, mais:55, terrain:13, autre:4}, biensLabel:'Maison dominante' },
+  '17':{ chom:8.8,  age:'45 – 64 ans', trend:'croissance',     color:'#ffd166',
+    migration:'Retraités parisiens, nordistes et britanniques. Île de Ré et Île d\'Oléron : résidences secondaires de luxe. Forte migration entrante.',
+    biens:{app:35, mais:50, terrain:10, autre:5}, biensLabel:'Maison favorite' },
+  '85':{ chom:7.5,  age:'45 – 59 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Familles cherchant cadre de vie rural + accès Nantes/La Roche. Retraités. Parisiens post-Covid.',
+    biens:{app:28, mais:55, terrain:13, autre:4}, biensLabel:'Maison dominante' },
+  '44':{ chom:7.9,  age:'25 – 44 ans', trend:'croissance forte',color:'#00d4aa',
+    migration:'Parisiens en quête d\'espace et de qualité de vie. Jeunes cadres. Nantes : 3e ville la plus attractive pour les jeunes actifs.',
+    biens:{app:52, mais:36, terrain:8, autre:4}, biensLabel:'Appartement légèrement favori' },
+  '35':{ chom:8.2,  age:'25 – 44 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Bretons natifs + parisiens et normands. Rennes très attractive pour étudiants et tech.',
+    biens:{app:50, mais:38, terrain:8, autre:4}, biensLabel:'Mix proche équilibre' },
+  '29':{ chom:9.8,  age:'45 – 59 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Population majoritairement locale (Bretons natifs). Peu de migration externe. Quelques retraités parisiens sur le littoral.',
+    biens:{app:28, mais:55, terrain:13, autre:4}, biensLabel:'Maison dominante' },
+  '56':{ chom:9.2,  age:'50 – 64 ans', trend:'légère hausse',  color:'#ffd166',
+    migration:'Retraités bretons + parisiens sur le Golfe du Morbihan. Belle-Île : résidences secondaires premium.',
+    biens:{app:30, mais:52, terrain:14, autre:4}, biensLabel:'Maison dominante' },
+  '22':{ chom:9.5,  age:'50 – 64 ans', trend:'stable',         color:'#ffd166',
+    migration:'Bretons locaux. Quelques retraités et néo-ruraux. Saint-Brieuc attire jeunes actifs côtes-armor.',
+    biens:{app:28, mais:55, terrain:13, autre:4}, biensLabel:'Maison dominante' },
+  '33':{ chom:8.9,  age:'30 – 44 ans', trend:'croissance forte',color:'#00d4aa',
+    migration:'Parisiens aisés et Bordelais natifs. Bassin d\'Arcachon : forte demande de résidences secondaires haut de gamme. Bordeaux métropole très attractive.',
+    biens:{app:48, mais:40, terrain:8, autre:4}, biensLabel:'Légèrement appartement' },
+  '67':{ chom:7.5,  age:'30 – 44 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Alsaciens natifs très attachés au territoire. Quelques Allemands et frontaliers. Strasbourg : étudiants et institutions européennes.',
+    biens:{app:50, mais:40, terrain:7, autre:3}, biensLabel:'Mix proche équilibre' },
+  '68':{ chom:8.2,  age:'35 – 49 ans', trend:'stable',         color:'#ffd166',
+    migration:'Alsaciens locaux. Quelques frontaliers suisses (Bâle). Tourisme œnotouristique important sur le canton.',
+    biens:{app:44, mais:44, terrain:8, autre:4}, biensLabel:'Mix parfaitement équilibré' },
+  '57':{ chom:11.8, age:'30 – 44 ans', trend:'légère baisse',  color:'#ef476f',
+    migration:'Lorrains natifs, frontaliers vers Luxembourg et Allemagne. Déclin industriel freine l\'attractivité hors axe frontalier.',
+    biens:{app:40, mais:50, terrain:7, autre:3}, biensLabel:'Maison légèrement favorite' },
+  '54':{ chom:10.9, age:'25 – 44 ans', trend:'légère baisse',  color:'#ef476f',
+    migration:'Lorrains locaux, quelques frontaliers luxembourgeois. Nancy : étudiants et jeunes actifs du secteur industriel.',
+    biens:{app:44, mais:42, terrain:8, autre:6}, biensLabel:'Mix proche équilibre' },
+  '74':{ chom:5.8,  age:'30 – 44 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Frontaliers genevois (Annecy, Thonon, Annemasse). Cadres français et suisses. Forte pression sur le marché, prix parmi les plus hauts hors Paris.',
+    biens:{app:45, mais:46, terrain:7, autre:2}, biensLabel:'Mix équilibré' },
+  '01':{ chom:6.2,  age:'30 – 44 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Frontaliers genevois (Gex, Ferney). Suisses et internationaux débordant de Genève. Forte demande soutenue par emplois Genève.',
+    biens:{app:40, mais:50, terrain:8, autre:2}, biensLabel:'Maison légèrement favorite' },
+  '73':{ chom:7.4,  age:'35 – 49 ans', trend:'stable',         color:'#00d4aa',
+    migration:'Savoyards natifs + amoureux de montagne. Investisseurs locatifs en station. Chambéry attire des actifs grenoblois et lyonnais.',
+    biens:{app:42, mais:40, terrain:10, autre:8}, biensLabel:'Mix avec forte part chalets/studios montagne' },
+  '38':{ chom:7.1,  age:'25 – 39 ans', trend:'croissance',     color:'#00d4aa',
+    migration:'Chercheurs et ingénieurs (CEA, STMicro, Schneider). Étudiants de grandes écoles. Profil très qualifié.',
+    biens:{app:55, mais:35, terrain:7, autre:3}, biensLabel:'Appartement favori' },
+  '59':{ chom:12.1, age:'30 – 44 ans', trend:'légère baisse',  color:'#ef476f',
+    migration:'Population majoritairement locale. Peu de migration entrante hors métropole lilloise. Solde migratoire légèrement négatif pour la zone rurale.',
+    biens:{app:38, mais:52, terrain:8, autre:2}, biensLabel:'Maison favorite' },
+  '62':{ chom:13.5, age:'35 – 49 ans', trend:'légère baisse',  color:'#ef476f',
+    migration:'Chti-mi natifs très attachés au territoire. Très peu de migration externe. Taux de rotation résidentielle faible.',
+    biens:{app:30, mais:58, terrain:9, autre:3}, biensLabel:'Maison très dominante' },
+  '76':{ chom:10.2, age:'30 – 44 ans', trend:'stable',         color:'#ffd166',
+    migration:'Normands locaux. Rouen attire quelques parisiens pour la proximité. Côte d\'Albâtre : quelques résidences secondaires.',
+    biens:{app:42, mais:48, terrain:7, autre:3}, biensLabel:'Maison favorite' },
+  '14':{ chom:9.4,  age:'35 – 49 ans', trend:'stable',         color:'#ffd166',
+    migration:'Normands natifs + retraités, quelques Parisiens (Honfleur/Deauville premium). Côte Fleurie : résidences secondaires actives.',
+    biens:{app:38, mais:50, terrain:9, autre:3}, biensLabel:'Maison favorite' },
+  '50':{ chom:8.5,  age:'45 – 59 ans', trend:'stable',         color:'#ffd166',
+    migration:'Normands locaux + quelques retraités. Mont-Saint-Michel : quelques investisseurs para-hôteliers.',
+    biens:{app:30, mais:56, terrain:11, autre:3}, biensLabel:'Maison dominante' },
+  '21':{ chom:8.3,  age:'40 – 54 ans', trend:'stable',         color:'#ffd166',
+    migration:'Bourguignons natifs + amateurs de vin et de campagne. Dijon attire cadres et étudiants. Solde migratoire légèrement positif.',
+    biens:{app:42, mais:46, terrain:9, autre:3}, biensLabel:'Mix équilibré' },
+  '71':{ chom:9.6,  age:'45 – 59 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Bourguignons locaux + retraités. Mâcon attire des Lyonnais cherchant des prix bas.',
+    biens:{app:34, mais:52, terrain:11, autre:3}, biensLabel:'Maison dominante' },
+  '03':{ chom:10.8, age:'45 – 64 ans', trend:'légère baisse',  color:'#ef476f',
+    migration:'Population locale vieillissante. Peu de migration entrante. Vichy peut attirer quelques retraités. Tendance au dépeuplement rural.',
+    biens:{app:28, mais:56, terrain:14, autre:2}, biensLabel:'Maison très dominante' },
+  '15':{ chom:8.9,  age:'45 – 64 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Auvergnats locaux. Peu de migration externe. Aurillac et Volcan d\'Auvergne attirent quelques touristes résidentiels.',
+    biens:{app:25, mais:56, terrain:16, autre:3}, biensLabel:'Maison très dominante' },
+  '63':{ chom:9.1,  age:'35 – 49 ans', trend:'stable',         color:'#ffd166',
+    migration:'Auvergnats natifs + quelques Parisiens sur les stations thermales. Clermont-Ferrand : profil industriel (Michelin).',
+    biens:{app:44, mais:42, terrain:11, autre:3}, biensLabel:'Mix proche équilibre' },
+  '23':{ chom:11.2, age:'55 – 69 ans', trend:'décroissance',   color:'#ef476f',
+    migration:'Population vieillissante, peu de renouvellement. Quelques néo-ruraux isolés. Territoire en fort désengagement démographique.',
+    biens:{app:20, mais:56, terrain:20, autre:4}, biensLabel:'Maison & terrain dominants' },
+  '19':{ chom:9.5,  age:'50 – 64 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Corréziens natifs + retraités actifs. Néo-ruraux en légère hausse. Brive attire bassin d\'emploi local.',
+    biens:{app:28, mais:55, terrain:14, autre:3}, biensLabel:'Maison dominante' },
+  '87':{ chom:9.8,  age:'40 – 54 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Limougeauds natifs + quelques néo-ruraux. Limoges : université et porcelaine historique. Peu de migration externe.',
+    biens:{app:38, mais:48, terrain:11, autre:3}, biensLabel:'Maison favorite' },
+  '46':{ chom:9.2,  age:'50 – 64 ans', trend:'stable',         color:'#ffd166',
+    migration:'Quercinois locaux + retraités parisiens amoureux du Lot. Cahors et vallée du Lot attirent tourisme et résidences secondaires.',
+    biens:{app:25, mais:55, terrain:17, autre:3}, biensLabel:'Maison & terrain recherchés' },
+  '48':{ chom:8.1,  age:'50 – 64 ans', trend:'légère baisse',  color:'#ffd166',
+    migration:'Lozériens natifs + retraités et amoureux de nature. Gorges du Tarn et Mont Aigoual. Peu dense, peu de migration.',
+    biens:{app:20, mais:52, terrain:24, autre:4}, biensLabel:'Maison & terrain très recherchés' },
+  '2A':{ chom:11.5, age:'30 – 44 ans', trend:'légère hausse',  color:'#ffd166',
+    migration:'Corses natifs (fort sentiment identitaire). Continentaux en nombre limité — forte résistance culturelle à la vente. Résidences secondaires (difficile d\'accès).',
+    biens:{app:38, mais:45, terrain:13, autre:4}, biensLabel:'Maison favorite' },
+  '2B':{ chom:12.2, age:'35 – 54 ans', trend:'stable',         color:'#ffd166',
+    migration:'Corses locaux. Peu de migration externe acceptée. Bastia : quelques actifs continentaux. Forte pression insulaire sur les prix.',
+    biens:{app:35, mais:48, terrain:14, autre:3}, biensLabel:'Maison dominante' },
+};
+// Défaut national
+const DEMO_DEFAULT = { chom:9.8, age:'35 – 54 ans', trend:'stable', color:'#ffd166',
+  migration:'Profil démographique proche de la moyenne nationale. Vérifier sur INSEE (data.gouv.fr) le solde migratoire récent pour ce territoire.',
+  biens:{app:38, mais:48, terrain:11, autre:3}, biensLabel:'Maison légèrement favorite' };
+
+function afficherDemographie(postcode, cityName, context) {
+  const el = document.getElementById('demo_socio');
+  if (!el) return;
+  const dept = postcode ? (postcode.startsWith('20') ? (postcode < '20200' ? '2A' : '2B') : postcode.slice(0,2)) : '';
+  const d = DEMO_DEPT[dept] || DEMO_DEFAULT;
+  const n = (cityName||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+
+  // Surcharges ville spécifique (cas particuliers notables)
+  let override = {};
+  if (dept==='06' && (n.includes('sophia') || n.includes('valbonne') || n.includes('biot') || n.includes('mougins') || n.includes('antibes'))) {
+    override = { age:'30 – 44 ans', migration:'Cadres internationaux (IBM, Oracle, Amadeus). Fort turn-over locatif. Population diplômée, multiculturelle, revenus élevés. Peu de retraités vs reste du 06.' };
+  } else if (dept==='83' && !isCoastal(cityName, dept)) {
+    override = { age:'45 – 64 ans', migration:'Retraités du Nord et d\'Île-de-France cherchant calme et prix accessibles. Quelques néo-ruraux en télétravail depuis 2020. Communauté locale stable.' };
+  } else if (dept==='13' && (n.includes('aix') || n.includes('pertuis') || n.includes('venelles'))) {
+    override = { chom:8.4, age:'30 – 49 ans', migration:'Cadres, professionnels de santé, enseignants. Aix : forte demande des grandes écoles (Sciences Po, IEP). Solde migratoire très positif, nombreux Parisiens.' };
+  } else if (dept==='31' && (n.includes('toulouse') || n.includes('blagnac') || n.includes('colomiers') || n.includes('labege'))) {
+    override = { chom:7.8, migration:'Ingénieurs aéronautique (Airbus, Safran, Thales), étudiants (130 000 dans l\'agglomération). Croissance démographique record : +15 000 hab/an. Très forte attractivité.' };
+  } else if (['74','01'].includes(dept)) {
+    override = { chom:5.8, age:'30 – 44 ans', migration:'Frontaliers genevois majoritaires. Salaires suisses permettent des budgets immobiliers bien supérieurs à la moyenne française. Très forte pression sur les prix.' };
+  }
+
+  const data = {...d, ...override};
+
+  // Couleur selon chômage
+  const chomColor = data.chom >= 12 ? 'var(--red)' : data.chom >= 9.5 ? 'var(--yellow)' : 'var(--green)';
+  const trendIcon = data.trend.includes('forte') ? '🚀' : data.trend.includes('croissance') ? '📈' : data.trend.includes('décroissance') ? '📉' : data.trend.includes('baisse') ? '↘️' : '➡️';
+  const trendColor = data.trend.includes('croissance') ? 'var(--green)' : data.trend.includes('décroissance') || data.trend.includes('baisse') ? 'var(--red)' : 'var(--yellow)';
+
+  // Barres de types de biens
+  const bItems = [
+    {label:'Appartement', pct:data.biens.app, color:'var(--accent)'},
+    {label:'Maison',      pct:data.biens.mais, color:'var(--green)'},
+    {label:'Terrain',     pct:data.biens.terrain, color:'var(--yellow)'},
+    {label:'Autre',       pct:data.biens.autre, color:'var(--text2)'},
+  ].sort((a,b)=>b.pct-a.pct);
+
+  const barsHtml = bItems.map(b=>`
+    <div style="margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+        <span style="color:var(--text)">${b.label}</span>
+        <span style="font-weight:700;color:${b.color}">${b.pct}%</span>
+      </div>
+      <div style="background:var(--bg);border-radius:4px;height:7px;overflow:hidden">
+        <div style="width:${b.pct}%;height:100%;background:${b.color};border-radius:4px;transition:width .6s"></div>
+      </div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px">
+      <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Taux de chômage</div>
+        <div style="font-size:26px;font-weight:800;color:${chomColor}">${data.chom.toFixed(1)}%</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Moyenne Fr. : 7,3%</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Tranche d'âge dominante</div>
+        <div style="font-size:20px;font-weight:800;color:var(--accent);line-height:1.3">${data.age}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Population résidente</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border)">
+        <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Tendance pop.</div>
+        <div style="font-size:17px;font-weight:800;color:${trendColor}">${trendIcon} ${data.trend.charAt(0).toUpperCase()+data.trend.slice(1)}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Solde migratoire + naturel</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🧭 Profil migratoire & acheteurs</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6">${data.migration}</div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">🏠 Biens les plus recherchés</div>
+        ${barsHtml}
+        <div style="font-size:11px;color:var(--text2);margin-top:6px;font-style:italic">${data.biensLabel}</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)">
+      📌 Sources : INSEE RP 2021 • Notaires de France 2024 • Observatoire DVF • données indicatives, département <strong>${dept||'?'}</strong>
+    </div>`;
+}
+
 async function lancerEtudeMarche() {
   const adresse = document.getElementById('adresse_marche').value || document.getElementById('adresse').value;
   const status = document.getElementById('marche_status');
@@ -1049,6 +1489,7 @@ async function lancerEtudeMarche() {
   // Carte + estimations statiques + facteurs économiques (toujours)
   initMap(geoData.lat, geoData.lon, geoData.label);
   afficherEstimationsStatiques(geoData.postcode, geoData.city, geoData.context);
+  afficherDemographie(geoData.postcode, geoData.city, geoData.context);
   afficherFacteursEconomiques(geoData.city, geoData.postcode, geoData.context, geoData.lat, geoData.lon);
   document.getElementById('marche_static').classList.remove('hidden');
   updateSiteLinks();
@@ -1817,7 +2258,8 @@ function calc() {
   }
   const pvImposableIR = pvBrute > 0 ? pvBrute * (1 - abatIR) : 0;
   const pvImposablePS = pvBrute > 0 ? pvBrute * (1 - abatPS) : 0;
-  const impotPV = pvImposableIR * 0.19 + pvImposablePS * 0.172;
+  const rpExo = document.getElementById('residence_principale')?.checked;
+  const impotPV = rpExo ? 0 : (pvImposableIR * 0.19 + pvImposablePS * 0.172);
   const netRevente = prixReventeNet - crdRev - ira - impotPV;
 
   // Récap coûts acquisition
@@ -1856,7 +2298,7 @@ function calc() {
       { l: 'Diagnostics / frais de cession', v: fraisDiag, sign: '−', color: 'var(--red)' },
       { l: `Capital restant dû (année ${anRev})`, v: crdRev, sign: '−', color: 'var(--red)' },
       { l: 'IRA (indemnités remb. anticipé)', v: ira, sign: '−', color: 'var(--red)' },
-      { l: `Impôt PV (${Math.round((1-abatIR)*100)}% imposable IR · ${Math.round((1-abatPS)*100)}% imposable PS)`, v: impotPV, sign: '−', color: 'var(--red)' },
+      { l: rpExo ? 'Impôt PV — Résidence principale (exonéré)' : `Impôt PV (${Math.round((1-abatIR)*100)}% imposable IR · ${Math.round((1-abatPS)*100)}% imposable PS)`, v: impotPV, sign: '−', color: rpExo ? 'var(--green)' : 'var(--red)' },
     ];
     decomEl.innerHTML = `<div style="display:grid;grid-template-columns:auto 1fr auto;gap:5px 16px;align-items:center">` +
       lignes2.map(r => `
